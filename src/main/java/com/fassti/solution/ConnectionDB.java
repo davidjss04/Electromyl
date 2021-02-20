@@ -15,7 +15,7 @@ public class ConnectionDB {
 
     protected static final String DRIVER = "org.mariadb.jdbc.Driver";
     protected static final String DB_URL = "jdbc:mariadb://localhost:3306/electromyl_db_l";
-    protected static final String USER = "david.jss";
+    protected static final String USER = "davidjss";
     protected static final String PASSWORD = "321pedidor";
     public static final String ANSI_RED = "\u001B[31m";
     public static String ANSI_RESET = "\u001B[0m";
@@ -24,15 +24,18 @@ public class ConnectionDB {
         try {
             Class.forName(DRIVER);
             connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            return true;
         } catch (Exception e) {
             System.out.println(ANSI_RED + "NO ACCESS TO THE DATABASES" + ANSI_RESET);
-            return true;
         }
         return false;
     }
 
     public boolean closeConnection() {
         try {
+            if (connection == null) {
+                return false;
+            }
             if (!connection.isClosed()) {
                 if (result != null) {
                     if (!result.isClosed())
@@ -41,11 +44,11 @@ public class ConnectionDB {
                 query.close();
                 connection.close();
             }
-            return false;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return true;
         }
+        return false;
     }
 
     protected static String toTitle(String text){

@@ -64,21 +64,21 @@ public class UbiGeoDistrict {
         return null;
     }
 
-    public static List<UbiGeoDistrict> listOf(UbiGeoProvince Province){
+    public static List<UbiGeoDistrict> listOf(UbiGeoProvince province){
         if (!connectionDB.openConnection()) {
             return null;
         }
 
         try {
             connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_district , name_district FROM district WHERE id_province = ?");
-            connectionDB.query.setString(1,Province.getIdProvince());
+            connectionDB.query.setString(1,province.getIdProvince());
             connectionDB.result = connectionDB.query.executeQuery();
             List<UbiGeoDistrict> ubiGeoDistrictList = new ArrayList<>();
             while (connectionDB.result.next()){
                 UbiGeoDistrict ubiGeoDistrict = new UbiGeoDistrict(
                         connectionDB.result.getString(1),
                         connectionDB.result.getString(2),
-                        Province
+                        province
                 );
                 ubiGeoDistrictList.add(ubiGeoDistrict);
             }

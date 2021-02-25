@@ -3,6 +3,7 @@ module com.fassti {
     requires javafx.fxml;
     requires java.sql;
     requires java.desktop;
+    requires org.junit.jupiter.api;
 
     opens com.fassti to javafx.fxml;
     exports com.fassti.model;

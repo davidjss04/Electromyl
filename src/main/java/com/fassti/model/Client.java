@@ -19,6 +19,11 @@ public class Client extends People implements IModel {
         this.condition = 0;
     }
 
+    @Override
+    public People newPeople() {
+        return null;
+    }
+
     public Client(int idPeople, String documentType, String documentNumber, String fullName, String numberPhone, String email, byte sex, Date birthdate, String address, UbiGeoDistrict district, boolean isDelete, Date dateJoined, byte origin, byte status, byte condition) {
         super(idPeople, documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, isDelete, dateJoined);
         this.origin = origin;
@@ -55,9 +60,8 @@ public class Client extends People implements IModel {
         return false;
     }
 
-    @Override
-    public boolean delete() {
-        return false;
+    public static class Query {
+
     }
 
     @Override

@@ -34,7 +34,7 @@ public class UbiGeoProvince {
     }
 
     public static UbiGeoProvince get(UbiGeoDepartment department, String idProvince){
-        if (!connectionDB.openConnection()) {
+        if (connectionDB.openConnection()) {
             return null;
         }
 
@@ -67,7 +67,7 @@ public class UbiGeoProvince {
     }
 
     public static List<UbiGeoProvince> listOf(UbiGeoDepartment department){
-        if (!connectionDB.openConnection()) {
+        if (connectionDB.openConnection()) {
             return null;
         }
 

@@ -1,6 +1,8 @@
 package com.fassti.model;
 
 import com.fassti.solution.ConnectionDB;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,8 +33,15 @@ public class UbiGeoDistrict {
         return province;
     }
 
+    @Nullable
+    @Contract(pure = true)
+    public static UbiGeoDistrict get(String idDistrict){
+        return null;
+    }
+
+    @Nullable
     public static UbiGeoDistrict get(UbiGeoProvince province, String idDistrict){
-        if (!connectionDB.openConnection()) {
+        if (connectionDB.openConnection()) {
             return null;
         }
 
@@ -64,8 +73,9 @@ public class UbiGeoDistrict {
         return null;
     }
 
+    @Nullable
     public static List<UbiGeoDistrict> listOf(UbiGeoProvince province){
-        if (!connectionDB.openConnection()) {
+        if (connectionDB.openConnection()) {
             return null;
         }
 

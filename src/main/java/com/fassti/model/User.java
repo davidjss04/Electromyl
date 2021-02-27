@@ -1,11 +1,13 @@
 package com.fassti.model;
 
+import com.fassti.solution.ConnectionDB;
 import com.fassti.solution.IModel;
 
 import java.sql.Date;
 import java.sql.Time;
 
 public class User extends People implements IModel {
+    static ConnectionDB connectionDB = new ConnectionDB();
 
     private String user_code;
     private String password;
@@ -24,6 +26,11 @@ public class User extends People implements IModel {
         this.isSuperUser = false;
         this.isActive = false;
         this.isStaff = false;
+    }
+
+    @Override
+    public People newPeople() {
+        return null;
     }
 
     public User(String user_code, String password, Time entry_time, Time exit_time, boolean isSuperUser, boolean isActive, boolean isStaff) {
@@ -108,8 +115,4 @@ public class User extends People implements IModel {
         return false;
     }
 
-    @Override
-    public boolean delete() {
-        return false;
-    }
 }

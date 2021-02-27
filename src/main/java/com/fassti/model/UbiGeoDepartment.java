@@ -26,7 +26,7 @@ public class UbiGeoDepartment {
     }
 
     public static UbiGeoDepartment get(String idDepartment){
-        if (!connectionDB.openConnection()) {
+        if (connectionDB.openConnection()) {
             return null;
         }
 
@@ -51,7 +51,7 @@ public class UbiGeoDepartment {
     }
 
     public static List<UbiGeoDepartment> list(){
-        if (!connectionDB.openConnection()) {
+        if (connectionDB.openConnection()) {
             return null;
         }
 

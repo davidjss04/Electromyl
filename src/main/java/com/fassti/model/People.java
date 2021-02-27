@@ -1,12 +1,13 @@
 package com.fassti.model;
 
 import com.fassti.solution.ConnectionDB;
-import com.fassti.solution.IModel;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Date;
+import java.sql.SQLException;
 
-public class People{
-    static ConnectionDB connectionDB = new ConnectionDB();
+public abstract class People{
 
     private int idPeople;
     private String documentType;
@@ -49,14 +50,6 @@ public class People{
         this.district = district;
         this.isDelete = isDelete;
         this.dateJoined = dateJoined;
-    }
-
-    public static ConnectionDB getConnectionDB() {
-        return connectionDB;
-    }
-
-    public static void setConnectionDB(ConnectionDB connectionDB) {
-        People.connectionDB = connectionDB;
     }
 
     public int getIdPeople() {
@@ -155,6 +148,40 @@ public class People{
         this.dateJoined = dateJoined;
     }
 
+    public abstract People newPeople();
+
+    @NotNull
+    @Contract("_ -> param1")
+    public static void insertAttributes(@NotNull Provider people, @NotNull ConnectionDB connectionDB) throws Exception {
+        people.setIdPeople(connectionDB.result.getInt(1));
+        people.setDocumentType(connectionDB.result.getString(2));
+        people.setDocumentNumber(connectionDB.result.getString(3));
+        people.setFullName(connectionDB.result.getString(4));
+        people.setNumberPhone(connectionDB.result.getString(5));
+        people.setEmail(connectionDB.result.getString(6));
+        people.setSex(connectionDB.result.getByte(7));
+        people.setBirthdate(connectionDB.result.getDate(8));
+        people.setAddress(connectionDB.result.getString(9));
+        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
+        people.setDelete(connectionDB.result.getBoolean(11));
+        people.setDateJoined(connectionDB.result.getDate(12));
+    }
+
+    public void extracted(@NotNull ConnectionDB connectionDB) throws SQLException{
+        connectionDB.query.setInt(1, getIdPeople());
+        connectionDB.query.setString(2, getDocumentType());
+        connectionDB.query.setString(3, getDocumentNumber());
+        connectionDB.query.setString(4, getFullName());
+        connectionDB.query.setString(5, getNumberPhone());
+        connectionDB.query.setString(6, getEmail());
+        connectionDB.query.setByte(7, getSex());
+        connectionDB.query.setDate(8, getBirthdate());
+        connectionDB.query.setString(9, getAddress());
+        connectionDB.query.setString(10, getDistrict().getIdDistrict());
+        connectionDB.query.setBoolean(11, isDelete());
+        connectionDB.query.setDate(12, getDateJoined());
+    }
+    
     @Override
     public String toString() {
         return "People{" +

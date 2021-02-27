@@ -1,7 +1,5 @@
 package com.fassti.solution;
 
-import com.fassti.App;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,11 +22,11 @@ public class ConnectionDB {
         try {
             Class.forName(DRIVER);
             connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            return true;
+            return false;
         } catch (Exception e) {
             System.out.println(ANSI_RED + "NO ACCESS TO THE DATABASES" + ANSI_RESET);
         }
-        return false;
+        return true;
     }
 
     public boolean closeConnection() {
@@ -51,7 +49,7 @@ public class ConnectionDB {
         return false;
     }
 
-    protected static String toTitle(String text){
+/*    protected static String toTitle(String text){
         String returnText= "";
         char character;
         boolean startLetter = true;
@@ -87,5 +85,5 @@ public class ConnectionDB {
         }
 
         return returnText;
-    }
+    }*/
 }

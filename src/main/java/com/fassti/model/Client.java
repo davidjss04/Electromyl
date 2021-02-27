@@ -2,8 +2,13 @@ package com.fassti.model;
 
 import com.fassti.solution.ConnectionDB;
 import com.fassti.solution.IModel;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Client extends People implements IModel {
     static ConnectionDB connectionDB = new ConnectionDB();
@@ -12,7 +17,7 @@ public class Client extends People implements IModel {
     private byte status;
     private byte condition;
 
-    public Client(){
+    public Client() {
         super();
         this.origin = 0;
         this.status = 0;
@@ -57,10 +62,168 @@ public class Client extends People implements IModel {
 
     @Override
     public boolean save() {
+        try {
+            if (connectionDB.openConnection()) {
+                return false;
+            }
+
+            connectionDB.query = connectionDB.connection.prepareCall("CALL spCUClient(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            extracted(connectionDB);
+            connectionDB.query.setByte(13, getOrigin());
+            connectionDB.query.setByte(14, getStatus());
+            connectionDB.query.setByte(15, getCondition());
+            connectionDB.result = connectionDB.query.executeQuery();
+
+            if (!connectionDB.result.next()) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionDB.closeConnection();
+        }
         return false;
     }
 
     public static class Query {
+
+        @NotNull
+        @org.jetbrains.annotations.Contract
+        private static Client insertAttributes(@NotNull Client client) throws Exception {
+            People.insertAttributes(client, connectionDB);
+            client.setOrigin(connectionDB.result.getByte(13));
+            client.setStatus(connectionDB.result.getByte(14));
+            client.setCondition(connectionDB.result.getByte(15));
+            return client;
+        }
+
+        @NotNull
+        private static List<Client> getClients() throws Exception {
+            connectionDB.result = connectionDB.query.executeQuery();
+            List<Client> clients = new ArrayList<>();
+            while (connectionDB.result.next()) {
+                Client client = insertAttributes(new Client());
+                clients.add(client);
+            }
+            return clients;
+        }
+
+        @Nullable
+        @Contract(pure = true)
+        public static Client get(int idClient) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT people.id_people,\n" +
+                        "\tpeople.document_type,\n" +
+                        "\tpeople.document_number,\n" +
+                        "\tpeople.full_name,\n" +
+                        "\tpeople.number_phone,\n" +
+                        "\tpeople.email,\n" +
+                        "\tpeople.sex,\n" +
+                        "\tpeople.birthdate,\n" +
+                        "\tpeople.address,\n" +
+                        "\tpeople.id_district,\n" +
+                        "\tpeople.is_delete,\n" +
+                        "\tpeople.date_joined,\n" +
+                        "\tclient.origin,\n" +
+                        "\tclient.status,\n" +
+                        "\tclient.`condition`\n" +
+                        "FROM people\n" +
+                        "INNER JOIN client \n" +
+                        "ON people.id_people = client.id_client \n" +
+                        "WHERE people.id_people = ?");
+                connectionDB.query.setInt(1, idClient);
+                connectionDB.result = connectionDB.query.executeQuery();
+                if (connectionDB.result.next()) {
+                    return insertAttributes(new Client());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+            return null;
+        }
+
+        @Nullable
+        @Contract(pure = true)
+        public static List<Client> getList(boolean isDelete) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT people.id_people,\n" +
+                        "\tpeople.document_type,\n" +
+                        "\tpeople.document_number,\n" +
+                        "\tpeople.full_name,\n" +
+                        "\tpeople.number_phone,\n" +
+                        "\tpeople.email,\n" +
+                        "\tpeople.sex,\n" +
+                        "\tpeople.birthdate,\n" +
+                        "\tpeople.address,\n" +
+                        "\tpeople.id_district,\n" +
+                        "\tpeople.is_delete,\n" +
+                        "\tpeople.date_joined,\n" +
+                        "\tclient.origin,\n" +
+                        "\tclient.status,\n" +
+                        "\tclient.`condition`\n" +
+                        "FROM people\n" +
+                        "INNER JOIN client \n" +
+                        "ON people.id_people = client.id_client\n" +
+                        "WHERE people.is_delete = ?");
+                connectionDB.query.setBoolean(1, isDelete);
+                return getClients();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+            return null;
+        }
+
+        @Nullable
+        @Contract(pure = true)
+        public static List<Client> search(String values) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT people.id_people,\n" +
+                        "\tpeople.document_type,\n" +
+                        "\tpeople.document_number,\n" +
+                        "\tpeople.full_name,\n" +
+                        "\tpeople.number_phone,\n" +
+                        "\tpeople.email,\n" +
+                        "\tpeople.sex,\n" +
+                        "\tpeople.birthdate,\n" +
+                        "\tpeople.address,\n" +
+                        "\tpeople.id_district,\n" +
+                        "\tpeople.is_delete,\n" +
+                        "\tpeople.date_joined,\n" +
+                        "\tclient.origin,\n" +
+                        "\tclient.status,\n" +
+                        "\tclient.`condition`\n" +
+                        "FROM people\n" +
+                        "INNER JOIN client \n" +
+                        "ON people.id_people = client.id_client\n" +
+                        "WHERE MATCH (people.document_number,\n" +
+                        "people.full_name) AGAINST ('" + values + "*' IN BOOLEAN MODE)");
+                return getClients();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+            return null;
+        }
 
     }
 
@@ -70,6 +233,6 @@ public class Client extends People implements IModel {
                 "origin=" + origin +
                 ", status=" + status +
                 ", condition=" + condition +
-                '}';
+                "} " + super.toString();
     }
 }

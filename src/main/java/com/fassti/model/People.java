@@ -152,7 +152,7 @@ public abstract class People{
 
     @NotNull
     @Contract("_ -> param1")
-    public static void insertAttributes(@NotNull Provider people, @NotNull ConnectionDB connectionDB) throws Exception {
+    public static void insertAttributes(@NotNull People people, @NotNull ConnectionDB connectionDB) throws Exception {
         people.setIdPeople(connectionDB.result.getInt(1));
         people.setDocumentType(connectionDB.result.getString(2));
         people.setDocumentNumber(connectionDB.result.getString(3));

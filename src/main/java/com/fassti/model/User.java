@@ -145,6 +145,19 @@ public class User extends People implements IModel {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userCode='" + userCode + '\'' +
+                ", password='" + password + '\'' +
+                ", entryTime=" + entryTime +
+                ", exitTime=" + exitTime +
+                ", isSuperUser=" + isSuperUser +
+                ", isActive=" + isActive +
+                ", isStaff=" + isStaff +
+                "} " + super.toString();
+    }
+
     public static class Query {
         @NotNull
         @org.jetbrains.annotations.Contract
@@ -288,7 +301,7 @@ public class User extends People implements IModel {
                         "INNER JOIN `user`\n" +
                         "ON people.id_people = user.id_user\n" +
                         "WHERE MATCH (people.document_number,\n" +
-                        "people.full_name) AGAINST ('"+values+"*' IN BOOLEAN MODE);");
+                        "people.full_name) AGAINST ('" + values + "*' IN BOOLEAN MODE);");
                 return getUsers();
 
             } catch (Exception e) {
@@ -298,18 +311,5 @@ public class User extends People implements IModel {
             }
             return null;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userCode='" + userCode + '\'' +
-                ", password='" + password + '\'' +
-                ", entryTime=" + entryTime +
-                ", exitTime=" + exitTime +
-                ", isSuperUser=" + isSuperUser +
-                ", isActive=" + isActive +
-                ", isStaff=" + isStaff +
-                "} " + super.toString();
     }
 }

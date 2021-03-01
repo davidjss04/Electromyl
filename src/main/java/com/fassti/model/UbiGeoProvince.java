@@ -1,6 +1,7 @@
 package com.fassti.model;
 
 import com.fassti.solution.ConnectionDB;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,21 +20,8 @@ public class UbiGeoProvince {
         this.department = department;
     }
 
-
-
-    public String getIdProvince() {
-        return idProvince;
-    }
-
-    public String getNameProvince() {
-        return nameProvince;
-    }
-
-    public UbiGeoDepartment getDepartment() {
-        return department;
-    }
-
-    public static UbiGeoProvince get(UbiGeoDepartment department, String idProvince){
+    @Nullable
+    public static UbiGeoProvince get(UbiGeoDepartment department, String idProvince) {
         if (connectionDB.openConnection()) {
             return null;
         }
@@ -49,7 +37,7 @@ public class UbiGeoProvince {
             connectionDB.query.setString(1, department.getIdDepartment());
             connectionDB.query.setString(2, idProvince);
             connectionDB.result = connectionDB.query.executeQuery();
-            if (connectionDB.result.next()){
+            if (connectionDB.result.next()) {
                 UbiGeoProvince ubiGeoProvince = new UbiGeoProvince(
                         connectionDB.result.getString(1),
                         connectionDB.result.getString(2),
@@ -66,17 +54,18 @@ public class UbiGeoProvince {
         return null;
     }
 
-    public static List<UbiGeoProvince> listOf(UbiGeoDepartment department){
+    @Nullable
+    public static List<UbiGeoProvince> listOf(UbiGeoDepartment department) {
         if (connectionDB.openConnection()) {
             return null;
         }
 
         try {
             connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_province , name_province FROM province WHERE id_department = ?");
-            connectionDB.query.setString(1,department.getIdDepartment());
+            connectionDB.query.setString(1, department.getIdDepartment());
             connectionDB.result = connectionDB.query.executeQuery();
             List<UbiGeoProvince> ubiGeoProvinceList = new ArrayList<>();
-            while (connectionDB.result.next()){
+            while (connectionDB.result.next()) {
                 UbiGeoProvince ubiGeoProvince = new UbiGeoProvince(
                         connectionDB.result.getString(1),
                         connectionDB.result.getString(2),
@@ -94,11 +83,23 @@ public class UbiGeoProvince {
         return null;
     }
 
+    public String getIdProvince() {
+        return idProvince;
+    }
+
+    public String getNameProvince() {
+        return nameProvince;
+    }
+
+    public UbiGeoDepartment getDepartment() {
+        return department;
+    }
+
     @Override
     public String toString() {
         return "UbiGeoProvince{" +
                 "idProvince='" + idProvince + '\'' +
                 ", nameProvince='" + nameProvince + '\'' +
-                '}'+ '\n';
+                '}' + '\n';
     }
 }

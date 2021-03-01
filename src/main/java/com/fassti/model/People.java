@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Date;
 import java.sql.SQLException;
 
-public abstract class People{
+public abstract class People {
 
     private int idPeople;
     private String documentType;
@@ -50,6 +50,23 @@ public abstract class People{
         this.district = district;
         this.isDelete = isDelete;
         this.dateJoined = dateJoined;
+    }
+
+    @NotNull
+    @Contract("_ -> param1")
+    public static void insertAttributes(@NotNull People people, @NotNull ConnectionDB connectionDB) throws Exception {
+        people.setIdPeople(connectionDB.result.getInt(1));
+        people.setDocumentType(connectionDB.result.getString(2));
+        people.setDocumentNumber(connectionDB.result.getString(3));
+        people.setFullName(connectionDB.result.getString(4));
+        people.setNumberPhone(connectionDB.result.getString(5));
+        people.setEmail(connectionDB.result.getString(6));
+        people.setSex(connectionDB.result.getByte(7));
+        people.setBirthdate(connectionDB.result.getDate(8));
+        people.setAddress(connectionDB.result.getString(9));
+        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
+        people.setDelete(connectionDB.result.getBoolean(11));
+        people.setDateJoined(connectionDB.result.getDate(12));
     }
 
     public int getIdPeople() {
@@ -150,24 +167,7 @@ public abstract class People{
 
     public abstract People newPeople();
 
-    @NotNull
-    @Contract("_ -> param1")
-    public static void insertAttributes(@NotNull People people, @NotNull ConnectionDB connectionDB) throws Exception {
-        people.setIdPeople(connectionDB.result.getInt(1));
-        people.setDocumentType(connectionDB.result.getString(2));
-        people.setDocumentNumber(connectionDB.result.getString(3));
-        people.setFullName(connectionDB.result.getString(4));
-        people.setNumberPhone(connectionDB.result.getString(5));
-        people.setEmail(connectionDB.result.getString(6));
-        people.setSex(connectionDB.result.getByte(7));
-        people.setBirthdate(connectionDB.result.getDate(8));
-        people.setAddress(connectionDB.result.getString(9));
-        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
-        people.setDelete(connectionDB.result.getBoolean(11));
-        people.setDateJoined(connectionDB.result.getDate(12));
-    }
-
-    public void extracted(@NotNull ConnectionDB connectionDB) throws SQLException{
+    public void extracted(@NotNull ConnectionDB connectionDB) throws SQLException {
         connectionDB.query.setInt(1, getIdPeople());
         connectionDB.query.setString(2, getDocumentType());
         connectionDB.query.setString(3, getDocumentNumber());
@@ -181,7 +181,7 @@ public abstract class People{
         connectionDB.query.setBoolean(11, isDelete());
         connectionDB.query.setDate(12, getDateJoined());
     }
-    
+
     @Override
     public String toString() {
         return "People{" +

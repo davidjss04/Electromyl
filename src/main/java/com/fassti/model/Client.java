@@ -24,16 +24,16 @@ public class Client extends People implements IModel {
         this.condition = 0;
     }
 
-    @Override
-    public People newPeople() {
-        return null;
-    }
-
     public Client(int idPeople, String documentType, String documentNumber, String fullName, String numberPhone, String email, byte sex, Date birthdate, String address, UbiGeoDistrict district, boolean isDelete, Date dateJoined, byte origin, byte status, byte condition) {
         super(idPeople, documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, isDelete, dateJoined);
         this.origin = origin;
         this.status = status;
         this.condition = condition;
+    }
+
+    @Override
+    public People newPeople() {
+        return null;
     }
 
     public byte getOrigin() {
@@ -84,6 +84,15 @@ public class Client extends People implements IModel {
             connectionDB.closeConnection();
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "origin=" + origin +
+                ", status=" + status +
+                ", condition=" + condition +
+                "} " + super.toString();
     }
 
     public static class Query {
@@ -225,14 +234,5 @@ public class Client extends People implements IModel {
             return null;
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "origin=" + origin +
-                ", status=" + status +
-                ", condition=" + condition +
-                "} " + super.toString();
     }
 }

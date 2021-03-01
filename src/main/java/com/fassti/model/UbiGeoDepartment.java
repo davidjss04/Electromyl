@@ -17,15 +17,7 @@ public class UbiGeoDepartment {
         this.nameDepartment = nameDepartment;
     }
 
-    public String getIdDepartment() {
-        return idDepartment;
-    }
-
-    public String getNameDepartment() {
-        return nameDepartment;
-    }
-
-    public static UbiGeoDepartment get(String idDepartment){
+    public static UbiGeoDepartment get(String idDepartment) {
         if (connectionDB.openConnection()) {
             return null;
         }
@@ -34,7 +26,7 @@ public class UbiGeoDepartment {
             connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_department, name_department FROM department WHERE id_department = ?");
             connectionDB.query.setString(1, idDepartment);
             connectionDB.result = connectionDB.query.executeQuery();
-            if (connectionDB.result.next()){
+            if (connectionDB.result.next()) {
                 UbiGeoDepartment ubiGeoDepartment = new UbiGeoDepartment(
                         connectionDB.result.getString(1),
                         connectionDB.result.getString(2)
@@ -50,7 +42,7 @@ public class UbiGeoDepartment {
         return null;
     }
 
-    public static List<UbiGeoDepartment> list(){
+    public static List<UbiGeoDepartment> list() {
         if (connectionDB.openConnection()) {
             return null;
         }
@@ -59,7 +51,7 @@ public class UbiGeoDepartment {
             connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_department, name_department FROM department");
             connectionDB.result = connectionDB.query.executeQuery();
             List<UbiGeoDepartment> ubiGeoDepartmentList = new ArrayList<>();
-            while (connectionDB.result.next()){
+            while (connectionDB.result.next()) {
                 UbiGeoDepartment ubiGeoDepartment = new UbiGeoDepartment(
                         connectionDB.result.getString(1),
                         connectionDB.result.getString(2)
@@ -76,12 +68,20 @@ public class UbiGeoDepartment {
         return null;
     }
 
+    public String getIdDepartment() {
+        return idDepartment;
+    }
+
+    public String getNameDepartment() {
+        return nameDepartment;
+    }
+
     @Override
     public String toString() {
         return "UbiGeoDepartment{" +
                 "idDepartment='" + idDepartment + '\'' +
                 ", nameDepartment='" + nameDepartment + '\'' +
-                '}' +'\n';
+                '}' + '\n';
     }
 
 

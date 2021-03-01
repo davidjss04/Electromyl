@@ -20,25 +20,12 @@ public class Provider extends People implements IModel {
         this.description = "";
     }
 
-    @Override
-    public People newPeople() {
-        return null;
-    }
-
     public Provider(String description) {
         this.description = description;
     }
 
     public Provider(int idPeople, String documentType, String documentNumber, String fullName, String numberPhone, String email, byte sex, Date birthdate, String address, UbiGeoDistrict district, boolean isDelete, Date dateJoined, String description) {
         super(idPeople, documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, isDelete, dateJoined);
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -69,6 +56,19 @@ public class Provider extends People implements IModel {
     }
 
     @Override
+    public People newPeople() {
+        return null;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
     public boolean save() {
         try {
             if (connectionDB.openConnection()) {
@@ -92,13 +92,18 @@ public class Provider extends People implements IModel {
         return false;
     }
 
-
+    @Override
+    public String toString() {
+        return "Provider{" +
+                "description='" + description + '\'' +
+                "} " + super.toString() + '\n';
+    }
 
     public static class Query {
 
         @org.jetbrains.annotations.Contract
         private static Provider insertAttributes(@NotNull Provider provider) throws Exception {
-            People.insertAttributes(provider,connectionDB);
+            People.insertAttributes(provider, connectionDB);
             provider.setDescription(connectionDB.result.getString(13));
             return provider;
         }
@@ -224,13 +229,6 @@ public class Provider extends People implements IModel {
             }
             return null;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Provider{" +
-                "description='" + description + '\'' +
-                "} " + super.toString() + '\n';
     }
 
 }

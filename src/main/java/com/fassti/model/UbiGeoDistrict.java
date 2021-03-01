@@ -21,26 +21,14 @@ public class UbiGeoDistrict {
         this.province = province;
     }
 
-    public String getIdDistrict() {
-        return idDistrict;
-    }
-
-    public String getNameDistrict() {
-        return nameDistrict;
-    }
-
-    public UbiGeoProvince getProvince() {
-        return province;
-    }
-
     @Nullable
     @Contract(pure = true)
-    public static UbiGeoDistrict get(String idDistrict){
+    public static UbiGeoDistrict get(String idDistrict) {
         return null;
     }
 
     @Nullable
-    public static UbiGeoDistrict get(UbiGeoProvince province, String idDistrict){
+    public static UbiGeoDistrict get(UbiGeoProvince province, String idDistrict) {
         if (connectionDB.openConnection()) {
             return null;
         }
@@ -56,7 +44,7 @@ public class UbiGeoDistrict {
             connectionDB.query.setString(1, province.getIdProvince());
             connectionDB.query.setString(2, idDistrict);
             connectionDB.result = connectionDB.query.executeQuery();
-            if (connectionDB.result.next()){
+            if (connectionDB.result.next()) {
                 UbiGeoDistrict ubiGeoDistrict = new UbiGeoDistrict(
                         connectionDB.result.getString(1),
                         connectionDB.result.getString(2),
@@ -74,17 +62,17 @@ public class UbiGeoDistrict {
     }
 
     @Nullable
-    public static List<UbiGeoDistrict> listOf(UbiGeoProvince province){
+    public static List<UbiGeoDistrict> listOf(UbiGeoProvince province) {
         if (connectionDB.openConnection()) {
             return null;
         }
 
         try {
             connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_district , name_district FROM district WHERE id_province = ?");
-            connectionDB.query.setString(1,province.getIdProvince());
+            connectionDB.query.setString(1, province.getIdProvince());
             connectionDB.result = connectionDB.query.executeQuery();
             List<UbiGeoDistrict> ubiGeoDistrictList = new ArrayList<>();
-            while (connectionDB.result.next()){
+            while (connectionDB.result.next()) {
                 UbiGeoDistrict ubiGeoDistrict = new UbiGeoDistrict(
                         connectionDB.result.getString(1),
                         connectionDB.result.getString(2),
@@ -102,11 +90,23 @@ public class UbiGeoDistrict {
         return null;
     }
 
+    public String getIdDistrict() {
+        return idDistrict;
+    }
+
+    public String getNameDistrict() {
+        return nameDistrict;
+    }
+
+    public UbiGeoProvince getProvince() {
+        return province;
+    }
+
     @Override
     public String toString() {
         return "UbiGeoDistrict{" +
                 "idDistrict='" + idDistrict + '\'' +
                 ", nameDistrict='" + nameDistrict + '\'' +
-                '}'+ '\n';
+                '}' + '\n';
     }
 }

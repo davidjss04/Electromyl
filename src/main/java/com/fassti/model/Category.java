@@ -16,8 +16,8 @@ public class Category implements IModel {
     private String name;
 
     public Category() {
-        this.idCategory = 0;
-        this.name = "";
+        this.idCategory = 1;
+        this.name = "CATEGORY EXAMPLE JAVA";
     }
 
     public Category(int idCategory, String name) {
@@ -55,6 +55,7 @@ public class Category implements IModel {
     }
 
     public static class Query {
+
         @NotNull
         @org.jetbrains.annotations.Contract
         private static Category insertAttributes(@NotNull Category category) throws Exception {
@@ -91,6 +92,5 @@ public class Category implements IModel {
         }
 
     }
-
 }
 

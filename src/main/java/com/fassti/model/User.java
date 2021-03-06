@@ -155,10 +155,11 @@ public class User extends People implements IModel {
                 ", isSuperUser=" + isSuperUser +
                 ", isActive=" + isActive +
                 ", isStaff=" + isStaff +
-                "} " + super.toString();
+                "} " + super.toString() + '\n';
     }
 
     public static class Query {
+
         @NotNull
         @org.jetbrains.annotations.Contract
         private static User insertAttributes(@NotNull User user) throws Exception {
@@ -311,5 +312,6 @@ public class User extends People implements IModel {
             }
             return null;
         }
+
     }
 }

@@ -24,7 +24,6 @@ public class Unit implements IModel {
         this.abbreviation = "";
         this.quality = 0D;
         this.isDelete = false;
-
     }
 
     public Unit(int idUnit, String name, String abbreviation, double quality, boolean isDelete) {
@@ -77,6 +76,28 @@ public class Unit implements IModel {
 
     @Override
     public boolean save() {
+        try {
+            if (connectionDB.openConnection()) {
+                return false;
+            }
+
+            connectionDB.query = connectionDB.connection.prepareCall("CALL spCUUnit(?,?,?,?,?)");
+            connectionDB.query.setInt(1, getIdUnit());
+            connectionDB.query.setString(2, getName());
+            connectionDB.query.setString(3, getAbbreviation());
+            connectionDB.query.setDouble(4, getQuality());
+            connectionDB.query.setBoolean(5, isDelete());
+            connectionDB.result = connectionDB.query.executeQuery();
+
+            if (!connectionDB.result.next()) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionDB.closeConnection();
+        }
         return false;
     }
 
@@ -95,6 +116,11 @@ public class Unit implements IModel {
         @NotNull
         @org.jetbrains.annotations.Contract
         private static Unit insertAttributes(@NotNull Unit unit) throws Exception {
+            unit.setIdUnit(connectionDB.result.getInt(1));
+            unit.setName(connectionDB.result.getString(2));
+            unit.setAbbreviation(connectionDB.result.getString(3));
+            unit.setQuality(connectionDB.result.getDouble(4));
+            unit.setDelete(connectionDB.result.getBoolean(5));
             return unit;
         }
 
@@ -112,19 +138,53 @@ public class Unit implements IModel {
         @Nullable
         @Contract(pure = true)
         public static Unit get(int idUnit) {
+
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_unit, name, abbreviation, quantity, is_delete FROM  unit WHERE id_unit = ?");
+                connectionDB.query.setInt(1, idUnit);
+                connectionDB.result = connectionDB.query.executeQuery();
+                if (connectionDB.result.next()) {
+                    return insertAttributes(new Unit());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
 
         @Nullable
         @Contract(pure = true)
         public static List<Unit> getList(boolean isDelete) {
+
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_unit, name, abbreviation, quantity, is_delete FROM  unit WHERE is_delete = ?");
+                connectionDB.query.setBoolean(1, isDelete);
+                return getUnits();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
 
         @Nullable
         @Contract(pure = true)
         public static List<Unit> search(String values) {
+            //Analyzing the importance in this class
             return null;
         }
     }
+
 }

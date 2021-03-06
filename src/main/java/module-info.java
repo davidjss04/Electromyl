@@ -3,7 +3,6 @@ module com.fassti {
     requires javafx.fxml;
     requires java.sql;
     requires java.desktop;
-    requires org.junit.jupiter.api;
     requires annotations;
     requires org.mariadb.jdbc;
 

@@ -92,7 +92,7 @@ public class Client extends People implements IModel {
                 "origin=" + origin +
                 ", status=" + status +
                 ", condition=" + condition +
-                "} " + super.toString();
+                "} " + super.toString() + '\n';
     }
 
     public static class Query {
@@ -233,6 +233,7 @@ public class Client extends People implements IModel {
             }
             return null;
         }
+
 
     }
 }

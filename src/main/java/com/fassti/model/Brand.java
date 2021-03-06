@@ -1,5 +1,6 @@
 package com.fassti.model;
 
+
 import com.fassti.solution.ConnectionDB;
 import com.fassti.solution.IModel;
 import org.jetbrains.annotations.Contract;
@@ -16,6 +17,7 @@ public class Brand implements IModel {
     private String name;
 
     public Brand() {
+        //idBrand in table DB isn't auto increment
         this.idBrand = 0;
         this.name = "";
     }
@@ -43,6 +45,25 @@ public class Brand implements IModel {
 
     @Override
     public boolean save() {
+        try {
+            if (connectionDB.openConnection()) {
+                return false;
+            }
+
+            connectionDB.query = connectionDB.connection.prepareCall("CALL spCUBrand(?,?)");
+            connectionDB.query.setInt(1, getIdBrand());
+            connectionDB.query.setString(2, getName());
+            connectionDB.result = connectionDB.query.executeQuery();
+
+            if (!connectionDB.result.next()) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionDB.closeConnection();
+        }
         return false;
     }
 
@@ -51,7 +72,7 @@ public class Brand implements IModel {
         return "Brand{" +
                 "idBrand=" + idBrand +
                 ", name='" + name + '\'' +
-                '}';
+                '}' + '\n';
     }
 
     public static class Query {
@@ -59,6 +80,8 @@ public class Brand implements IModel {
         @NotNull
         @org.jetbrains.annotations.Contract
         private static Brand insertAttributes(@NotNull Brand brand) throws Exception {
+            brand.setIdBrand(connectionDB.result.getInt(1));
+            brand.setName(connectionDB.result.getString(2));
             return brand;
         }
 
@@ -76,18 +99,49 @@ public class Brand implements IModel {
         @Nullable
         @Contract(pure = true)
         public static Brand get(int idBrand) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_brand, name FROM brand WHERE id_brand = ?");
+                connectionDB.query.setInt(1, idBrand);
+                connectionDB.result = connectionDB.query.executeQuery();
+                if (connectionDB.result.next()) {
+                    return insertAttributes(new Brand());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
 
         @Nullable
         @Contract(pure = true)
-        public static List<Brand> getList(boolean isDelete) {
+        public static List<Brand> getList() {
+
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_brand, name FROM brand");
+                return getBrands();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
 
         @Nullable
         @Contract(pure = true)
         public static List<Brand> search(String values) {
+            //Analyzing the importance in this class
             return null;
         }
     }

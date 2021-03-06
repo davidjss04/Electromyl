@@ -14,11 +14,12 @@ public class Product implements IModel {
 
     private int idProduct;
     private String productCode;
+    private String description;
     private double stock;
     private Category category;
     private Brand brand;
+    private boolean isDelete;
     private List<Price> prices;
-    private boolean idDelete;
 
     public Product() {
         this.idProduct = 0;
@@ -26,18 +27,19 @@ public class Product implements IModel {
         this.stock = 0D;
         this.category = new Category();
         this.brand = new Brand();
+        this.isDelete = false;
         this.prices = new ArrayList<>();
-        this.idDelete = false;
     }
 
-    public Product(int idProduct, String productCode, double stock, Category category, Brand brand, List<Price> prices, boolean idDelete) {
+    public Product(int idProduct, String productCode, String description, double stock, Category category, Brand brand, List<Price> prices, boolean idDelete) {
         this.idProduct = idProduct;
         this.productCode = productCode;
+        this.description = description;
         this.stock = stock;
         this.category = category;
         this.brand = brand;
         this.prices = prices;
-        this.idDelete = idDelete;
+        this.isDelete = idDelete;
     }
 
     public int getIdProduct() {
@@ -54,6 +56,14 @@ public class Product implements IModel {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public double getStock() {
@@ -80,6 +90,10 @@ public class Product implements IModel {
         this.brand = brand;
     }
 
+    public void setPrice(Price price) {
+        this.getPrices().add(price);
+    }
+
     public List<Price> getPrices() {
         return prices;
     }
@@ -88,17 +102,42 @@ public class Product implements IModel {
         this.prices = prices;
     }
 
-    public boolean isIdDelete() {
-        return idDelete;
+    public boolean isDelete() {
+        return isDelete;
     }
 
-    public void setIdDelete(boolean idDelete) {
-        this.idDelete = idDelete;
+    public void setDelete(boolean delete) {
+        this.isDelete = delete;
     }
 
     @Override
     public boolean save() {
+        try {
+            if (connectionDB.openConnection()) {
+                return false;
+            }
+
+            connectionDB.query = connectionDB.connection.prepareCall("CALL spCUProduct(?,?,?,?,?,?,?)");
+            connectionDB.query.setInt(1, getIdProduct());
+            connectionDB.query.setString(2, getProductCode());
+            connectionDB.query.setString(3, getDescription());
+            connectionDB.query.setDouble(4, getStock());
+            connectionDB.query.setInt(5, getCategory().getIdCategory());
+            connectionDB.query.setInt(6, getBrand().getIdBrand());
+            connectionDB.query.setBoolean(7, isDelete());
+            connectionDB.result = connectionDB.query.executeQuery();
+
+            if (!connectionDB.result.next()) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionDB.closeConnection();
+        }
         return false;
+
     }
 
     @Override
@@ -106,23 +145,33 @@ public class Product implements IModel {
         return "Product{" +
                 "idProduct=" + idProduct +
                 ", productCode='" + productCode + '\'' +
+                ", description='" + description + '\'' +
                 ", stock=" + stock +
                 ", category=" + category +
                 ", brand=" + brand +
                 ", prices=" + prices +
-                ", idDelete=" + idDelete +
+                ", isDelete=" + isDelete +
                 '}';
     }
 
     public static class Query {
+
         @NotNull
         @org.jetbrains.annotations.Contract
         private static Product insertAttributes(@NotNull Product product) throws Exception {
+            product.setIdProduct(connectionDB.result.getInt(1));
+            product.setProductCode(connectionDB.result.getString(2));
+            product.setDescription(connectionDB.result.getString(3));
+            product.setStock(connectionDB.result.getDouble(4));
+            product.setCategory(Category.Query.get(connectionDB.result.getInt(5)));
+            product.setBrand(Brand.Query.get(connectionDB.result.getInt(6)));
+            product.setDelete(connectionDB.result.getBoolean(7));
+            product.setPrices(Price.Query.getList(product.getIdProduct()));
             return product;
         }
 
         @NotNull
-        private static List<Product> getCategories() throws Exception {
+        private static List<Product> getProducts() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
             List<Product> products = new ArrayList<>();
             while (connectionDB.result.next()) {
@@ -135,19 +184,65 @@ public class Product implements IModel {
         @Nullable
         @Contract(pure = true)
         public static Product get(int idProduct) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_product, product_code, description, stock, id_category, id_brand, is_delete FROM  product where id_product = ?");
+                connectionDB.query.setInt(1, idProduct);
+                connectionDB.result = connectionDB.query.executeQuery();
+                if (connectionDB.result.next()) {
+                    return insertAttributes(new Product());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
+
         }
 
         @Nullable
         @Contract(pure = true)
         public static List<Product> getList(boolean isDelete) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_product, product_code, description, stock, id_category, id_brand, is_delete FROM  product WHERE is_delete = ?");
+                connectionDB.query.setBoolean(1, isDelete);
+                return getProducts();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
 
         @Nullable
         @Contract(pure = true)
         public static List<Product> search(String values) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_product, product_code, description, stock, id_category, id_brand, is_delete FROM  product WHERE MATCH (product_code, description) AGAINST ('" + values + "*' IN BOOLEAN MODE)");
+                return getProducts();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
+
     }
 }

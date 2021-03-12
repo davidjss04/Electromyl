@@ -59,6 +59,8 @@ public class Category implements IModel {
         @NotNull
         @org.jetbrains.annotations.Contract
         private static Category insertAttributes(@NotNull Category category) throws Exception {
+            category.setIdCategory(connectionDB.result.getInt(1));
+            category.setName(connectionDB.result.getString(2));
             return category;
         }
 
@@ -76,12 +78,42 @@ public class Category implements IModel {
         @Nullable
         @Contract(pure = true)
         public static Category get(int idCategory) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_category, name FROM category WHERE id_category = ?");
+                connectionDB.query.setInt(1, idCategory);
+                connectionDB.result = connectionDB.query.executeQuery();
+                if (connectionDB.result.next()) {
+                    return insertAttributes(new Category());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
 
         @Nullable
         @Contract(pure = true)
-        public static List<Category> getList(boolean isDelete) {
+        public static List<Category> getList (){
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_category, name FROM category");
+                return getCategories();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
             return null;
         }
 

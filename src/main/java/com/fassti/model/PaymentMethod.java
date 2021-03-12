@@ -1,8 +1,17 @@
 package com.fassti.model;
 
+import com.fassti.solution.ConnectionDB;
 import com.fassti.solution.IModel;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PaymentMethod implements IModel {
+    static ConnectionDB connectionDB = new ConnectionDB();
+
     private int idPaymentMethod;
     private String name;
 
@@ -35,6 +44,35 @@ public class PaymentMethod implements IModel {
     @Override
     public boolean save() {
         return false;
+    }
+
+    public static class Query{
+
+        @NotNull
+        private static List<PaymentMethod> getPaymentMethods(){
+            List<PaymentMethod> paymentMethods = new ArrayList<>();
+            paymentMethods.add(new PaymentMethod(1,"EFECTIVO"));
+            paymentMethods.add(new PaymentMethod(2,"CREDITO"));
+            return paymentMethods;
+        }
+
+        @Nullable
+        @Contract(pure = true)
+        public static PaymentMethod get(int idPaymentMethod) {
+            for (PaymentMethod paymentMethod: getPaymentMethods()) {
+                if(paymentMethod.getIdPaymentMethod() == idPaymentMethod){
+                    return paymentMethod;
+                }
+            }
+            return null;
+
+        }
+
+        @Contract(pure = true)
+        public static List<PaymentMethod> getList(boolean isDelete) {
+            return getPaymentMethods();
+        }
+
     }
 
     @Override

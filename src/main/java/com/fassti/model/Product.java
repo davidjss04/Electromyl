@@ -127,9 +127,15 @@ public class Product implements IModel {
             connectionDB.query.setBoolean(7, isDelete());
             connectionDB.result = connectionDB.query.executeQuery();
 
-            if (!connectionDB.result.next()) {
+            if (connectionDB.result.next()) {
+                for (Price price:getPrices() ) {
+                    price.setIdProduct(connectionDB.result.getInt(1));
+                    price.save();
+                }
+
                 return true;
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,20 +144,6 @@ public class Product implements IModel {
         }
         return false;
 
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "idProduct=" + idProduct +
-                ", productCode='" + productCode + '\'' +
-                ", description='" + description + '\'' +
-                ", stock=" + stock +
-                ", category=" + category +
-                ", brand=" + brand +
-                ", prices=" + prices +
-                ", isDelete=" + isDelete +
-                '}';
     }
 
     public static class Query {
@@ -244,5 +236,19 @@ public class Product implements IModel {
             return null;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "idProduct=" + idProduct +
+                ", productCode='" + productCode + '\'' +
+                ", description='" + description + '\'' +
+                ", stock=" + stock +
+                ", category=" + category +
+                ", brand=" + brand +
+                ", prices=" + prices +
+                ", isDelete=" + isDelete +
+                '}'+'\n';
     }
 }

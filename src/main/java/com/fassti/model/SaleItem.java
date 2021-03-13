@@ -2,44 +2,39 @@ package com.fassti.model;
 
 import com.fassti.solution.ConnectionDB;
 import com.fassti.solution.IModel;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class SaleItem implements IModel {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SaleItem extends Item implements IModel {
     static ConnectionDB connectionDB = new ConnectionDB();
 
-    private int idSaleItem;
     private int idSale;
-    private Product product;
-    private String unit;
-    private double productPrice;
-    private double productQuality;
-    private double subTotal;
 
     public SaleItem() {
-        this.idSaleItem = 0;
+        super();
         this.idSale = 0;
-        this.product = new Product();
-        this.unit = "";
-        this.productPrice = 0d;
-        this.productQuality = 0d;
-        this.subTotal = 0d;
     }
 
-    public SaleItem(int idSaleItem, int idSale, Product product, String unit, double productPrice, double productQuality, double subTotal) {
-        this.idSaleItem = idSaleItem;
+    public SaleItem(int idSale) {
         this.idSale = idSale;
-        this.product = product;
-        this.unit = unit;
-        this.productPrice = productPrice;
-        this.productQuality = productQuality;
-        this.subTotal = subTotal;
     }
 
-    public int getIdSaleItem() {
-        return idSaleItem;
+    public SaleItem(int idItem, Product product, String unit, double productPrice, double productQuantity, double subTotal, int idSale) {
+        super(idItem, product, unit, productPrice, productQuantity, subTotal);
+        this.idSale = idSale;
     }
 
-    public void setIdSaleItem(int idSaleItem) {
-        this.idSaleItem = idSaleItem;
+    public static SaleItem newItem(Product product,String unit, double productPrice, double productQuality){
+        SaleItem saleItem = new SaleItem();
+        saleItem.setUnit(unit);
+        saleItem.setProduct(product);
+        saleItem.setProductPrice(productPrice);
+        saleItem.setProductQuantity(productQuality);
+        return saleItem;
     }
 
     public int getIdSale() {
@@ -50,70 +45,16 @@ public class SaleItem implements IModel {
         this.idSale = idSale;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public double getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductPrice(double productPrice) {
-        this.productPrice = productPrice;
-    }
-
-    public double getProductQuality() {
-        return productQuality;
-    }
-
-    public void setProductQuality(double productQuality) {
-        this.productQuality = productQuality;
-    }
-
-    public double getSubTotal() {
-        return subTotal;
-    }
-
-    public void setSubTotal(double subTotal) {
-        this.subTotal = subTotal;
-    }
-
-    public static SaleItem newItem(Product product, double productPrice, double productQuality){
-        SaleItem saleItem = new SaleItem();
-        saleItem.setProduct(product);
-        saleItem.setProductPrice(productPrice);
-        saleItem.setProductQuality(productQuality);
-        return saleItem;
-    }
-
     @Override
     public boolean save() {
-
+    
         try {
             if(connectionDB.openConnection()){
                 return false;
             }
             connectionDB.query = connectionDB.connection.prepareCall("CALL spCUSaleDetail(?,?,?,?,?,?)");
-            connectionDB.query.setInt(1,getIdSaleItem());
+            extracted(connectionDB);
             connectionDB.query.setInt(2,getIdSale());
-            System.out.println(getIdSale());
-            System.out.println(getProduct().getIdProduct());
-            connectionDB.query.setInt(3,getProduct().getIdProduct());
-            connectionDB.query.setString(4,getUnit());
-            connectionDB.query.setDouble(5,getProductPrice());
-            connectionDB.query.setDouble(6,getProductQuality());
             connectionDB.result = connectionDB.query.executeQuery();
 
             if (!connectionDB.result.next()) {
@@ -128,16 +69,94 @@ public class SaleItem implements IModel {
         return false;
     }
 
+    public static class Query{
+        @NotNull
+        @org.jetbrains.annotations.Contract
+        private static SaleItem insertAttributes(@NotNull SaleItem saleItem) throws Exception {
+            Item.insertAttributes(saleItem,connectionDB);
+            saleItem.setIdSale(connectionDB.result.getInt(1));
+            return saleItem;
+        }
+
+        @NotNull
+        private static List<SaleItem> getSaleItems() throws Exception {
+            connectionDB.result = connectionDB.query.executeQuery();
+            List<SaleItem> saleItems = new ArrayList<>();
+            while (connectionDB.result.next()) {
+                SaleItem saleItem = insertAttributes(new SaleItem());
+                saleItems.add(saleItem);
+            }
+            return saleItems;
+        }
+
+        @Nullable
+        @Contract(pure = true)
+        public static SaleItem get(int idSaleItem) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("");
+                connectionDB.query.setInt(1, idSaleItem);
+                connectionDB.result = connectionDB.query.executeQuery();
+                if (connectionDB.result.next()) {
+                    return insertAttributes(new SaleItem());
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+            return null;
+
+        }
+
+        @Nullable
+        @Contract(pure = true)
+        public static List<SaleItem> getList(boolean isDelete) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("");
+                connectionDB.query.setBoolean(1, isDelete);
+                return getSaleItems();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+            return null;
+        }
+
+        @Nullable
+        @Contract(pure = true)
+        public static List<SaleItem> search(String values) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return null;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("");
+                return getSaleItems();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+            return null;
+        }
+    }
+
     @Override
     public String toString() {
         return "SaleItem{" +
-                "idSaleItem=" + idSaleItem +
-                ", idSale=" + idSale +
-                ", product=" + product +
-                ", unit='" + unit + '\'' +
-                ", productPrice=" + productPrice +
-                ", productQuality=" + productQuality +
-                ", subTotal=" + subTotal +
-                '}';
+                "idSale=" + idSale +
+                "} " + super.toString();
     }
 }

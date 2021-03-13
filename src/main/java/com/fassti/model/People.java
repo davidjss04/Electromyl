@@ -52,23 +52,6 @@ public abstract class People {
         this.dateJoined = dateJoined;
     }
 
-    @NotNull
-    @Contract("_ -> param1")
-    public static void insertAttributes(@NotNull People people, @NotNull ConnectionDB connectionDB) throws Exception {
-        people.setIdPeople(connectionDB.result.getInt(1));
-        people.setDocumentType(connectionDB.result.getString(2));
-        people.setDocumentNumber(connectionDB.result.getString(3));
-        people.setFullName(connectionDB.result.getString(4));
-        people.setNumberPhone(connectionDB.result.getString(5));
-        people.setEmail(connectionDB.result.getString(6));
-        people.setSex(connectionDB.result.getByte(7));
-        people.setBirthdate(connectionDB.result.getDate(8));
-        people.setAddress(connectionDB.result.getString(9));
-        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
-        people.setDelete(connectionDB.result.getBoolean(11));
-        people.setDateJoined(connectionDB.result.getDate(12));
-    }
-
     public int getIdPeople() {
         return idPeople;
     }
@@ -180,6 +163,24 @@ public abstract class People {
         connectionDB.query.setString(10, getDistrict().getIdDistrict());
         connectionDB.query.setBoolean(11, isDelete());
         connectionDB.query.setDate(12, getDateJoined());
+    }
+
+
+    @NotNull
+    @Contract("_ -> param1")
+    public static void insertAttributes(@NotNull People people, @NotNull ConnectionDB connectionDB) throws Exception {
+        people.setIdPeople(connectionDB.result.getInt(1));
+        people.setDocumentType(connectionDB.result.getString(2));
+        people.setDocumentNumber(connectionDB.result.getString(3));
+        people.setFullName(connectionDB.result.getString(4));
+        people.setNumberPhone(connectionDB.result.getString(5));
+        people.setEmail(connectionDB.result.getString(6));
+        people.setSex(connectionDB.result.getByte(7));
+        people.setBirthdate(connectionDB.result.getDate(8));
+        people.setAddress(connectionDB.result.getString(9));
+        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
+        people.setDelete(connectionDB.result.getBoolean(11));
+        people.setDateJoined(connectionDB.result.getDate(12));
     }
 
     @Override

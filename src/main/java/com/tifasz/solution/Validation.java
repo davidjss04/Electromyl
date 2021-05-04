@@ -74,6 +74,7 @@ public class Validation {
         if (documentType == "DNI") {
             pattern = Pattern.compile("^(?=.{8}$)[0-9]+?$");
             matcher = pattern.matcher(document.trim());
+
             return matcher.matches();
         }
 
@@ -179,11 +180,10 @@ public class Validation {
         return false;
     }
 
-    public static String toNull(String text){
-        if (text.equals(null) || text.equals("")) {
+    public static String filter(String values){
+        if (values.equals(null) || values.equals("")) {
             return "-";
         }
-        return text.trim();
+        return values.trim().toUpperCase();
     }
-
 }

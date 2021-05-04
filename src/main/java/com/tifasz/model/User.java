@@ -124,7 +124,9 @@ public class User extends People implements IModel {
 
     @Override
     public boolean save() {
+
         try {
+
             if (connectionDB.openConnection()) {
                 return false;
             }
@@ -150,19 +152,6 @@ public class User extends People implements IModel {
             connectionDB.closeConnection();
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userCode='" + userCode + '\'' +
-                ", password='" + password + '\'' +
-                ", entryTime=" + entryTime +
-                ", exitTime=" + exitTime +
-                ", isSuperUser=" + isSuperUser +
-                ", isActive=" + isActive +
-                ", isStaff=" + isStaff +
-                "} " + super.toString() + '\n';
     }
 
     public static class Query {
@@ -364,5 +353,19 @@ public class User extends People implements IModel {
             return null;
         }
 
+
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userCode='" + userCode + '\'' +
+                ", password='" + password + '\'' +
+                ", entryTime=" + entryTime +
+                ", exitTime=" + exitTime +
+                ", isSuperUser=" + isSuperUser +
+                ", isActive=" + isActive +
+                ", isStaff=" + isStaff +
+                "} " + super.toString() + '\n';
     }
 }

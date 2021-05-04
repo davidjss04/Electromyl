@@ -24,6 +24,29 @@ public class UbiGeoDistrict {
     @Nullable
     @Contract(pure = true)
     public static UbiGeoDistrict get(String idDistrict) {
+        if (connectionDB.openConnection()) {
+            return null;
+        }
+
+        try {
+            connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_district, name_district, id_province from district WHERE id_district = ?");
+            connectionDB.query.setString(1, idDistrict);
+            connectionDB.result = connectionDB.query.executeQuery();
+            if (connectionDB.result.next()) {
+                UbiGeoDistrict ubiGeoDistrict = new UbiGeoDistrict(
+                        connectionDB.result.getString(1),
+                        connectionDB.result.getString(2),
+                        UbiGeoProvince.get(connectionDB.result.getString(3))
+
+                );
+                return ubiGeoDistrict;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connectionDB.closeConnection();
+        }
+
         return null;
     }
 
@@ -102,11 +125,12 @@ public class UbiGeoDistrict {
         return province;
     }
 
+
     @Override
     public String toString() {
         return "UbiGeoDistrict{" +
                 "idDistrict='" + idDistrict + '\'' +
                 ", nameDistrict='" + nameDistrict + '\'' +
-                '}' + '\n';
+                '}';
     }
 }

@@ -21,6 +21,34 @@ public class UbiGeoProvince {
     }
 
     @Nullable
+    public static UbiGeoProvince get(String idProvince) {
+        if (connectionDB.openConnection()) {
+            return null;
+        }
+
+        try {
+            connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_province, name_province, id_department FROM province WHERE id_province = ?");
+            connectionDB.query.setString(1, idProvince);
+            connectionDB.result = connectionDB.query.executeQuery();
+            if (connectionDB.result.next()) {
+                UbiGeoProvince ubiGeoProvince = new UbiGeoProvince(
+                        connectionDB.result.getString(1),
+                        connectionDB.result.getString(2),
+                        UbiGeoDepartment.get(connectionDB.result.getString(3))
+                );
+                return ubiGeoProvince;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connectionDB.closeConnection();
+        }
+
+        return null;
+    }
+
+
+    @Nullable
     public static UbiGeoProvince get(UbiGeoDepartment department, String idProvince) {
         if (connectionDB.openConnection()) {
             return null;

@@ -16,8 +16,8 @@ public class CUser extends User {
                                String password, Time entryTime, Time exitTime){
 
         if (isValidUser(documentType, documentNumber, fullName, numberPhone, email, address, password)) {
-            return User.newUser(documentType, documentNumber, fullName, numberPhone, email,
-                    sex, birthdate, address, district, dateJoined, userCode, password, entryTime, exitTime);
+            return User.newUser(documentType, documentNumber, filter(fullName), numberPhone, filter(email),
+                    sex, birthdate, filter(address), district, dateJoined, filter(userCode), password, entryTime, exitTime);
         }
 
         return null;
@@ -28,8 +28,17 @@ public class CUser extends User {
                                String password, Time entryTime, Time exitTime){
 
         if (isValidUser(documentType, documentNumber, firstName, lastName, numberPhone, email, address, password)) {
-            return User.newUser(documentType, documentNumber,String.format("%s, %s",firstName,lastName)+ firstName, numberPhone, email,
-                    sex, birthdate, address, district, dateJoined, userCode, password, entryTime, exitTime);
+            return User.newUser(documentType, documentNumber,String.format("%s, %s",filter(lastName), filter(firstName)), numberPhone, filter(email),
+                    sex, birthdate, filter(address), district, dateJoined, filter(userCode), password, entryTime, exitTime);
+        }
+
+        return null;
+    }
+
+
+    public static Boolean save(User user){
+        if(user != null){
+            return user.save();
         }
 
         return null;
@@ -88,26 +97,41 @@ public class CUser extends User {
 
     private static boolean isValidUser(String documentType, String documentNumber, String firstName, String lastName, String numberPhone, String email, String address, String password) {
 
-        if (!isValidDocument(documentType, documentNumber))
+        if (!isValidDocument(documentType, documentNumber)) {
+            System.out.println("documentType = " + documentType);
+            System.out.println("documentNumber = " + documentNumber);
             return false;
+        }
 
-        if (!isValidFirstName(firstName))
+        if (!isValidFirstName(firstName)){
+            System.out.println("firstName = " + firstName);
             return false;
+        }
 
-        if (!isValidLastName(lastName))
+        if (!isValidLastName(lastName)){
+            System.out.println("lastName = " + lastName);
             return false;
+        }
 
-        if (!isValidPhoneNumber(numberPhone))
+        if (!isValidPhoneNumber(numberPhone)){
+            System.out.println("numberPhone = " + numberPhone);
             return false;
+        }
 
-        if (!isValidEmail(email))
+        if (!isValidEmail(email)){
+            System.out.println("email = " + email);
             return false;
+        }
 
-        if (!isValidAddress(address))
+        if (!isValidAddress(address)){
+            System.out.println("address = " + address);
             return false;
+        }
 
-        if (!isValidPassword(password))
+        if (!isValidPassword(password)){
+            System.out.println("password = " + password);
             return false;
+        }
 
         return true;
 

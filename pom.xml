@@ -47,7 +47,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
-                    <mainClass>com.fassti.App</mainClass>
+                    <mainClass>com.tifasz.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>

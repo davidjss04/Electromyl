@@ -6,7 +6,7 @@ module com.fassti {
     requires annotations;
     requires org.mariadb.jdbc;
 
-    opens com.fassti to javafx.fxml;
-    exports com.fassti.model;
-    exports com.fassti;
+    opens com.tifasz to javafx.fxml;
+    exports com.tifasz.model;
+    exports com.tifasz;
 }

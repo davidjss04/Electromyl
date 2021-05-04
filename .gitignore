@@ -9,7 +9,7 @@
 
 .idea
 Electromyl.iml
-src/main/java/com/fassti/test/
+src/main/java/com/tifasz/test/
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,java-web,code-java,intellij+all,linux

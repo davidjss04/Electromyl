@@ -1,7 +1,7 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CUser;
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +11,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User extends People implements IModel {
+public class User extends People {
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private String userCode;
@@ -52,6 +52,18 @@ public class User extends People implements IModel {
         this.isSuperUser = isSuperUser;
         this.isActive = isActive;
         this.isStaff = isStaff;
+    }
+
+    protected static User newUser(String documentType, String documentNumber, String fullName, String numberPhone, String email,
+                                  byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String userCode,
+                                  String password, Time entryTime, Time exitTime) {
+        User user = new User();
+        user.setPeopleAttributes(documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, dateJoined);
+        user.setUserCode(userCode);
+        user.setPassword(password);
+        user.setEntryTime(entryTime);
+        user.setExitTime(exitTime);
+        return user;
     }
 
     public String getUserCode() {
@@ -110,20 +122,7 @@ public class User extends People implements IModel {
         isStaff = staff;
     }
 
-    protected static User newUser(String documentType, String documentNumber, String fullName, String numberPhone, String email,
-          byte sex, Date birthdate, String address, UbiGeoDistrict district,Date dateJoined, String userCode,
-          String password, Time entryTime, Time exitTime) {
-        User user = new User();
-        user.setPeopleAttributes( documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, dateJoined);
-        user.setUserCode(userCode);
-        user.setPassword(password);
-        user.setEntryTime(entryTime);
-        user.setExitTime(exitTime);
-        return user;
-    }
-
-    @Override
-    public boolean save() {
+    protected boolean save() {
 
         try {
 
@@ -154,11 +153,24 @@ public class User extends People implements IModel {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userCode='" + userCode + '\'' +
+                ", password='" + password + '\'' +
+                ", entryTime=" + entryTime +
+                ", exitTime=" + exitTime +
+                ", isSuperUser=" + isSuperUser +
+                ", isActive=" + isActive +
+                ", isStaff=" + isStaff +
+                "} " + super.toString() + '\n';
+    }
+
     public static class Query {
 
         @NotNull
         @org.jetbrains.annotations.Contract
-        private static User insertAttributes(@NotNull User user) throws Exception {
+        private static CUser insertAttributes(@NotNull CUser user) throws Exception {
             People.insertAttributes(user, connectionDB);
             user.setUserCode(connectionDB.result.getString(13));
             user.setPassword(connectionDB.result.getString(14));
@@ -171,11 +183,11 @@ public class User extends People implements IModel {
         }
 
         @NotNull
-        private static List<User> getUsers() throws Exception {
+        private static List<CUser> getUsers() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
-            List<User> users = new ArrayList<>();
+            List<CUser> users = new ArrayList<>();
             while (connectionDB.result.next()) {
-                User user = insertAttributes(new User());
+                CUser user = insertAttributes(new CUser());
                 users.add(user);
             }
             return users;
@@ -183,7 +195,7 @@ public class User extends People implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static User get(int idUser) {
+        public static CUser get(int idUser) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -214,7 +226,7 @@ public class User extends People implements IModel {
                 connectionDB.query.setInt(1, idUser);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new User());
+                    return insertAttributes(new CUser());
                 }
 
             } catch (Exception e) {
@@ -227,7 +239,7 @@ public class User extends People implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static User get(String documentNumber) {
+        public static CUser get(String documentNumber) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -258,7 +270,7 @@ public class User extends People implements IModel {
                 connectionDB.query.setString(1, documentNumber);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new User());
+                    return insertAttributes(new CUser());
                 }
 
             } catch (Exception e) {
@@ -271,7 +283,7 @@ public class User extends People implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static List<User> getList(boolean isDelete) {
+        public static List<CUser> getList(boolean isDelete) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -313,7 +325,7 @@ public class User extends People implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static List<User> search(String values) {
+        public static List<CUser> search(String values) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -354,18 +366,5 @@ public class User extends People implements IModel {
         }
 
 
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userCode='" + userCode + '\'' +
-                ", password='" + password + '\'' +
-                ", entryTime=" + entryTime +
-                ", exitTime=" + exitTime +
-                ", isSuperUser=" + isSuperUser +
-                ", isActive=" + isActive +
-                ", isStaff=" + isStaff +
-                "} " + super.toString() + '\n';
     }
 }

@@ -32,6 +32,13 @@ public class Price implements IModel {
         this.unit = unit;
     }
 
+    public static Price newPrice(double value, Unit unit) {
+        Price price = new Price();
+        price.setValue(value);
+        price.setUnit(unit);
+        return price;
+    }
+
     public int getIdPrice() {
         return idPrice;
     }
@@ -64,13 +71,6 @@ public class Price implements IModel {
         this.unit = unit;
     }
 
-    public static Price newPrice(double value, Unit unit){
-        Price price = new Price();
-        price.setValue(value);
-        price.setUnit(unit);
-        return price;
-    }
-
     @Override
     public boolean save() {
         try {
@@ -81,7 +81,7 @@ public class Price implements IModel {
             connectionDB.query = connectionDB.connection.prepareCall("CALL spCUPrice(?,?,?,?)");
             connectionDB.query.setInt(1, getIdPrice());
             connectionDB.query.setDouble(2, getValue());
-            connectionDB.query.setInt(3,getIdProduct());
+            connectionDB.query.setInt(3, getIdProduct());
             connectionDB.query.setInt(4, getUnit().getIdUnit());
             connectionDB.result = connectionDB.query.executeQuery();
 
@@ -95,6 +95,16 @@ public class Price implements IModel {
             connectionDB.closeConnection();
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Price{" +
+                "idPrice=" + idPrice +
+                ", value=" + value +
+                ", idProduct=" + idProduct +
+                ", unit=" + unit +
+                '}' + '\n';
     }
 
     public static class Query {
@@ -172,15 +182,5 @@ public class Price implements IModel {
             return null;
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return "Price{" +
-                "idPrice=" + idPrice +
-                ", value=" + value +
-                ", idProduct=" + idProduct +
-                ", unit=" + unit +
-                '}'+'\n';
     }
 }

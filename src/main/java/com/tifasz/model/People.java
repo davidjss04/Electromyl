@@ -67,6 +67,23 @@ public abstract class People {
         this.dateJoined = dateJoined;
     }
 
+    @NotNull
+    @Contract("_ -> param1")
+    public static void insertAttributes(@NotNull People people, @NotNull ConnectionDB connectionDB) throws Exception {
+        people.setIdPeople(connectionDB.result.getInt(1));
+        people.setDocumentType(connectionDB.result.getString(2));
+        people.setDocumentNumber(connectionDB.result.getString(3));
+        people.setFullName(connectionDB.result.getString(4));
+        people.setNumberPhone(connectionDB.result.getString(5));
+        people.setEmail(connectionDB.result.getString(6));
+        people.setSex(connectionDB.result.getByte(7));
+        people.setBirthdate(connectionDB.result.getDate(8));
+        people.setAddress(connectionDB.result.getString(9));
+        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
+        people.setDelete(connectionDB.result.getBoolean(11));
+        people.setDateJoined(connectionDB.result.getDate(12));
+    }
+
     public int getIdPeople() {
         return idPeople;
     }
@@ -163,34 +180,6 @@ public abstract class People {
         this.dateJoined = dateJoined;
     }
 
-    public static class Query{
-
-        public static boolean documentExist(String document){
-            try {
-                if (connectionDB.openConnection()) {
-                    return false;
-                }
-
-                connectionDB.query = connectionDB.connection.prepareStatement("SELECT document_number FROM people WHERE document_number = ?");
-                connectionDB.query.setString(1, document);
-                connectionDB.result = connectionDB.query.executeQuery();
-
-                if (connectionDB.result.next()) {
-                    return true;
-                }
-
-                return false;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                connectionDB.closeConnection();
-            }
-
-            return false;
-        }
-    }
-
     public void setPeopleAttributes(String documentType, String documentNumber, String fullName, String numberPhone, String email, byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined) {
         this.documentType = documentType;
         this.documentNumber = documentNumber;
@@ -219,24 +208,6 @@ public abstract class People {
         connectionDB.query.setDate(12, getDateJoined());
     }
 
-
-    @NotNull
-    @Contract("_ -> param1")
-    public static void insertAttributes(@NotNull People people, @NotNull ConnectionDB connectionDB) throws Exception {
-        people.setIdPeople(connectionDB.result.getInt(1));
-        people.setDocumentType(connectionDB.result.getString(2));
-        people.setDocumentNumber(connectionDB.result.getString(3));
-        people.setFullName(connectionDB.result.getString(4));
-        people.setNumberPhone(connectionDB.result.getString(5));
-        people.setEmail(connectionDB.result.getString(6));
-        people.setSex(connectionDB.result.getByte(7));
-        people.setBirthdate(connectionDB.result.getDate(8));
-        people.setAddress(connectionDB.result.getString(9));
-        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
-        people.setDelete(connectionDB.result.getBoolean(11));
-        people.setDateJoined(connectionDB.result.getDate(12));
-    }
-
     @Override
     public String toString() {
         return "People{" +
@@ -253,5 +224,29 @@ public abstract class People {
                 ", isDelete=" + isDelete +
                 ", dateJoined=" + dateJoined +
                 '}';
+    }
+
+    public static class Query {
+
+        public static boolean documentExist(String document) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return false;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT document_number FROM people WHERE document_number = ?");
+                connectionDB.query.setString(1, document);
+                connectionDB.result = connectionDB.query.executeQuery();
+
+                return connectionDB.result.next();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+
+            return false;
+        }
     }
 }

@@ -32,6 +32,16 @@ public abstract class Item {
         this.subTotal = subTotal;
     }
 
+    @NotNull
+    @Contract("_ -> param1")
+    public static void insertAttributes(@NotNull Item item, @NotNull ConnectionDB connectionDB) throws Exception {
+        item.setIdItem(connectionDB.result.getInt(1));
+        item.setProduct(Product.Query.get(connectionDB.result.getInt(2)));
+        item.setUnit(connectionDB.result.getString(3));
+        item.setProductPrice(connectionDB.result.getDouble(4));
+        item.setProductQuantity(connectionDB.result.getDouble(5));
+    }
+
     public int getIdItem() {
         return idItem;
     }
@@ -80,23 +90,12 @@ public abstract class Item {
         this.subTotal = subTotal;
     }
 
-
     public void extracted(@NotNull ConnectionDB connectionDB) throws SQLException {
-        connectionDB.query.setInt(1,getIdItem());
-        connectionDB.query.setInt(3,getProduct().getIdProduct());
-        connectionDB.query.setString(4,getUnit());
-        connectionDB.query.setDouble(5,getProductPrice());
-        connectionDB.query.setDouble(6,getProductQuantity());
-    }
-
-    @NotNull
-    @Contract("_ -> param1")
-    public static void insertAttributes(@NotNull Item item, @NotNull ConnectionDB connectionDB) throws Exception {
-        item.setIdItem(connectionDB.result.getInt(1));
-        item.setProduct(Product.Query.get(connectionDB.result.getInt(2)));
-        item.setUnit(connectionDB.result.getString(3));
-        item.setProductPrice(connectionDB.result.getDouble(4));
-        item.setProductQuantity(connectionDB.result.getDouble(5));
+        connectionDB.query.setInt(1, getIdItem());
+        connectionDB.query.setInt(3, getProduct().getIdProduct());
+        connectionDB.query.setString(4, getUnit());
+        connectionDB.query.setDouble(5, getProductPrice());
+        connectionDB.query.setDouble(6, getProductQuantity());
     }
 
     @Override

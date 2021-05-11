@@ -29,15 +29,7 @@ public class PurchaseItem extends Item implements IModel {
         this.idPurchase = idPurchase;
     }
 
-    public int getIdPurchase() {
-        return idPurchase;
-    }
-
-    public void setIdPurchase(int idPurchase) {
-        this.idPurchase = idPurchase;
-    }
-
-    public static PurchaseItem newItem(Product product, String unit, double productPrice, double productQuantity){
+    public static PurchaseItem newItem(Product product, String unit, double productPrice, double productQuantity) {
         PurchaseItem item = new PurchaseItem();
         item.setProduct(product);
         item.setUnit(unit);
@@ -46,16 +38,24 @@ public class PurchaseItem extends Item implements IModel {
         return item;
     }
 
+    public int getIdPurchase() {
+        return idPurchase;
+    }
+
+    public void setIdPurchase(int idPurchase) {
+        this.idPurchase = idPurchase;
+    }
+
     @Override
     public boolean save() {
 
         try {
-            if(connectionDB.openConnection()){
+            if (connectionDB.openConnection()) {
                 return false;
             }
             connectionDB.query = connectionDB.connection.prepareCall("CAll spCUPurchaseDetail(?, ?, ?, ?, ?, ?)");
             extracted(connectionDB);
-            connectionDB.query.setInt(2,getIdPurchase());
+            connectionDB.query.setInt(2, getIdPurchase());
             connectionDB.result = connectionDB.query.executeQuery();
 
             if (!connectionDB.result.next()) {
@@ -70,11 +70,18 @@ public class PurchaseItem extends Item implements IModel {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "PurchaseItem{" +
+                "idPurchase=" + idPurchase +
+                "} " + super.toString();
+    }
+
     public static class Query {
         @NotNull
         @org.jetbrains.annotations.Contract
         private static PurchaseItem insertAttributes(@NotNull PurchaseItem purchaseItem) throws Exception {
-            Item.insertAttributes(purchaseItem,connectionDB);
+            Item.insertAttributes(purchaseItem, connectionDB);
             purchaseItem.setIdPurchase(connectionDB.result.getInt(1));
             return purchaseItem;
         }
@@ -152,12 +159,5 @@ public class PurchaseItem extends Item implements IModel {
             }
             return null;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "PurchaseItem{" +
-                "idPurchase=" + idPurchase +
-                "} " + super.toString();
     }
 }

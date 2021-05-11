@@ -10,131 +10,110 @@ import java.util.List;
 import static com.tifasz.solution.Validation.*;
 
 public class CUser extends User {
-    //Se realizaron dos metodos, con la alternativa para que que en uno se puedo ingresar el nombre completo y en el otro por detalle
-    public static User newUser(String documentType, String documentNumber, String fullName, String numberPhone, String email,
-                               byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String userCode,
-                               String password, Time entryTime, Time exitTime){
 
-        if (isValidUser(documentType, documentNumber, fullName, numberPhone, email, address, password)) {
-            return User.newUser(documentType, documentNumber, filter(fullName), numberPhone, filter(email),
-                    sex, birthdate, filter(address), district, dateJoined, filter(userCode), password, entryTime, exitTime);
-        }
-
-        return null;
+    public CUser() {
     }
 
-    public static User newUser(String documentType,  String documentNumber, String firstName, String lastName, String numberPhone, String email,
-                               byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String userCode,
-                               String password, Time entryTime, Time exitTime){
-
-        if (isValidUser(documentType, documentNumber, firstName, lastName, numberPhone, email, address, password)) {
-            return User.newUser(documentType, documentNumber,String.format("%s, %s",filter(lastName), filter(firstName)), numberPhone, filter(email),
-                    sex, birthdate, filter(address), district, dateJoined, filter(userCode), password, entryTime, exitTime);
-        }
-
-        return null;
+    public CUser(String userCode, String password, Time entryTime, Time exitTime, boolean isSuperUser, boolean isActive, boolean isStaff) {
+        super(userCode, password, entryTime, exitTime, isSuperUser, isActive, isStaff);
     }
 
-
-    public static Boolean save(User user){
-        if(user != null){
-            return user.save();
-        }
-
-        return null;
+    public CUser(int idPeople, String documentType, String documentNumber, String fullName, String numberPhone, String email, byte sex, Date birthdate, String address, UbiGeoDistrict district, boolean isDelete, Date dateJoined, String userCode, String password, Time entryTime, Time exitTime, boolean isSuperUser, boolean isActive, boolean isStaff) {
+        super(idPeople, documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, isDelete, dateJoined, userCode, password, entryTime, exitTime, isSuperUser, isActive, isStaff);
     }
 
-    public static User get(int op, String documentNumber){
+    public static CUser newUser(String documentType, String documentNumber, String fullName, String numberPhone, String email,
+                                byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String userCode,
+                                String password, Time entryTime, Time exitTime) {
 
-        if(op == 1)
-            if(isValidDocument("DNI",documentNumber)){
-                return User.Query.get(documentNumber);
+        CUser user = new CUser();
+        user.setPeopleAttributes(documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, dateJoined);
+        user.setUserCode(userCode);
+        user.setPassword(password);
+        user.setEntryTime(entryTime);
+        user.setExitTime(exitTime);
+        return user;
+    }
+
+    public static CUser newUser(String documentType, String documentNumber, String firstName, String lastName, String numberPhone, String email,
+                                byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String userCode,
+                                String password, Time entryTime, Time exitTime) {
+
+        if (!isValidFirstName(firstName) && !isValidLastName(lastName)) {
+            return null;
+        }
+
+        CUser user = new CUser();
+        user.setPeopleAttributes(documentType, documentNumber, String.format("%s, %s", filter(lastName), filter(firstName)), numberPhone, email, sex, birthdate, address, district, dateJoined);
+        user.setUserCode(userCode);
+        user.setPassword(password);
+        user.setEntryTime(entryTime);
+        user.setExitTime(exitTime);
+        return user;
+    }
+
+    public static CUser get(int op, String documentNumber) {
+
+        if (op == 1)
+            if (isValidDocument("DNI", documentNumber)) {
+                return Query.get(documentNumber);
             }
 
-        if(op == 2)
-            if(isValidDocument("RUC",documentNumber)){
-                return User.Query.get(documentNumber);
+        if (op == 2)
+            if (isValidDocument("RUC", documentNumber)) {
+                return Query.get(documentNumber);
             }
 
         return null;
     }
 
-    public static User get(int idUser){
+    public static User get(int idUser) {
         return User.Query.get(idUser);
     }
 
-    public static List<User> getList(boolean isDelete){
-        return User.Query.getList(isDelete);
+    public static List<CUser> getList(boolean isDelete) {
+        return Query.getList(isDelete);
     }
 
-    public static List<User> search(String values){
-        return User.Query.search(values);
+    public static List<CUser> search(String values) {
+        return Query.search(values);
     }
 
-    private static boolean isValidUser(String documentType, String documentNumber, String fullName, String numberPhone, String email, String address, String password){
+    @Override
+    protected boolean save() {
+        if (getClass() != null) {
+            if (isValidUser()) {
+                return super.save();
+            }
+            return false;
+        }
+        return false;
+    }
 
-        if (!isValidDocument(documentType,documentNumber))
+    private boolean isValidUser() {
+
+        if (documentExist(getDocumentNumber()))
             return false;
 
-        if (!isValidFullName(fullName))
+        if (!isValidDocument(getDocumentType(), getDocumentNumber()))
             return false;
 
-        if (!isValidPhoneNumber(numberPhone))
+        if (!isValidFullName(getFullName()))
             return false;
 
-        if (!isValidEmail(email))
+        if (!isValidPhoneNumber(getNumberPhone()))
             return false;
 
-        if (!isValidAddress(address))
+        if (!isValidEmail(getEmail()))
             return false;
 
-        if (!isValidPassword(password))
+        if (!isValidAddress(getAddress()))
+            return false;
+
+        if(!isValidPassword(getPassword()))
             return false;
 
         return true;
-
-    }
-
-    private static boolean isValidUser(String documentType, String documentNumber, String firstName, String lastName, String numberPhone, String email, String address, String password) {
-
-        if (!isValidDocument(documentType, documentNumber)) {
-            System.out.println("documentType = " + documentType);
-            System.out.println("documentNumber = " + documentNumber);
-            return false;
-        }
-
-        if (!isValidFirstName(firstName)){
-            System.out.println("firstName = " + firstName);
-            return false;
-        }
-
-        if (!isValidLastName(lastName)){
-            System.out.println("lastName = " + lastName);
-            return false;
-        }
-
-        if (!isValidPhoneNumber(numberPhone)){
-            System.out.println("numberPhone = " + numberPhone);
-            return false;
-        }
-
-        if (!isValidEmail(email)){
-            System.out.println("email = " + email);
-            return false;
-        }
-
-        if (!isValidAddress(address)){
-            System.out.println("address = " + address);
-            return false;
-        }
-
-        if (!isValidPassword(password)){
-            System.out.println("password = " + password);
-            return false;
-        }
-
-        return true;
-
     }
 
 }

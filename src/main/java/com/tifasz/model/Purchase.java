@@ -104,7 +104,17 @@ public class Purchase implements IModel {
         return false;
     }
 
-    public static class Query{
+    @Override
+    public String toString() {
+        return "Purchase{" +
+                "idPurchase=" + idPurchase +
+                ", provider=" + provider +
+                ", date=" + date +
+                ", isDelete=" + isDelete +
+                '}';
+    }
+
+    public static class Query {
 
         @NotNull
         @org.jetbrains.annotations.Contract
@@ -189,15 +199,5 @@ public class Purchase implements IModel {
             }
             return null;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Purchase{" +
-                "idPurchase=" + idPurchase +
-                ", provider=" + provider +
-                ", date=" + date +
-                ", isDelete=" + isDelete +
-                '}';
     }
 }

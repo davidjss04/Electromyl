@@ -46,23 +46,31 @@ public class Ticket implements IModel {
         return false;
     }
 
-    public static class Query{
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "idTicket=" + idTicket +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    public static class Query {
 
         @NotNull
-        private static List<Ticket> getTickets(){
+        private static List<Ticket> getTickets() {
             List<Ticket> tickets = new ArrayList<>();
-            tickets.add(new Ticket(1,"FACTURA"));
-            tickets.add(new Ticket(2,"BOLETA"));
-            tickets.add(new Ticket(3,"COTIZACIÓN"));
-            tickets.add(new Ticket(4,"NOTA DE VENTA"));
+            tickets.add(new Ticket(1, "FACTURA"));
+            tickets.add(new Ticket(2, "BOLETA"));
+            tickets.add(new Ticket(3, "COTIZACIÓN"));
+            tickets.add(new Ticket(4, "NOTA DE VENTA"));
             return tickets;
         }
 
         @Nullable
         @Contract(pure = true)
         public static Ticket get(int idTicket) {
-            for (Ticket ticket: getTickets() ) {
-                if(ticket.getIdTicket() == idTicket){
+            for (Ticket ticket : getTickets()) {
+                if (ticket.getIdTicket() == idTicket) {
                     return ticket;
                 }
             }
@@ -74,13 +82,5 @@ public class Ticket implements IModel {
             return getTickets();
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return "Ticket{" +
-                "idTicket=" + idTicket +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

@@ -143,6 +143,20 @@ public class Sale implements IModel {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Sale{" +
+                "idSale=" + idSale +
+                ", ticket=" + ticket +
+                ", user=" + user +
+                ", client=" + client +
+                ", paymentMethod=" + paymentMethod +
+                ", isDelete=" + isDelete +
+                ", date=" + date +
+                ", detail=" + detail +
+                '}';
+    }
+
     public static class Query {
         @NotNull
         @org.jetbrains.annotations.Contract
@@ -230,19 +244,5 @@ public class Sale implements IModel {
             }
             return null;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Sale{" +
-                "idSale=" + idSale +
-                ", ticket=" + ticket +
-                ", user=" + user +
-                ", client=" + client +
-                ", paymentMethod=" + paymentMethod +
-                ", isDelete=" + isDelete +
-                ", date=" + date +
-                ", detail=" + detail +
-                '}';
     }
 }

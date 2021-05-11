@@ -1,7 +1,7 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CCategory;
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,15 +9,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Category implements IModel {
+public class Category {
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idCategory;
     private String name;
 
     public Category() {
-        this.idCategory = 1;
-        this.name = "CATEGORY EXAMPLE JAVA";
+        this.idCategory = 0;
+        this.name = "OTROS";
     }
 
     public Category(int idCategory, String name) {
@@ -41,8 +41,26 @@ public class Category implements IModel {
         this.name = name;
     }
 
-    @Override
-    public boolean save() {
+    protected boolean save() {
+        try {
+            if (connectionDB.openConnection()) {
+                return false;
+            }
+
+            connectionDB.query = connectionDB.connection.prepareCall("CALL spCUCategory(?,?,1)");
+            connectionDB.query.setInt(1, getIdCategory());
+            connectionDB.query.setString(2, getName());
+            connectionDB.result = connectionDB.query.executeQuery();
+
+            if (!connectionDB.result.next()) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionDB.closeConnection();
+        }
         return false;
     }
 
@@ -51,25 +69,25 @@ public class Category implements IModel {
         return "Category{" +
                 "idCategory=" + idCategory +
                 ", name='" + name + '\'' +
-                '}';
+                '}' + '\n';
     }
 
     public static class Query {
 
         @NotNull
         @org.jetbrains.annotations.Contract
-        private static Category insertAttributes(@NotNull Category category) throws Exception {
+        private static CCategory insertAttributes(@NotNull CCategory category) throws Exception {
             category.setIdCategory(connectionDB.result.getInt(1));
             category.setName(connectionDB.result.getString(2));
             return category;
         }
 
         @NotNull
-        private static List<Category> getCategories() throws Exception {
+        private static List<CCategory> getCategories() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
-            List<Category> categories = new ArrayList<>();
+            List<CCategory> categories = new ArrayList<>();
             while (connectionDB.result.next()) {
-                Category category = insertAttributes(new Category());
+                CCategory category = insertAttributes(new CCategory());
                 categories.add(category);
             }
             return categories;
@@ -77,7 +95,7 @@ public class Category implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static Category get(int idCategory) {
+        public static CCategory get(int idCategory) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -87,7 +105,7 @@ public class Category implements IModel {
                 connectionDB.query.setInt(1, idCategory);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new Category());
+                    return insertAttributes(new CCategory());
                 }
 
             } catch (Exception e) {
@@ -100,7 +118,7 @@ public class Category implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Category> getList (){
+        public static List<CCategory> getList() {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -117,12 +135,32 @@ public class Category implements IModel {
             return null;
         }
 
-        @Nullable
-        @Contract(pure = true)
-        public static List<Category> search(String values) {
-            return null;
+        public static boolean existName(String name) {
+            try {
+                if (connectionDB.openConnection()) {
+                    return false;
+                }
+
+                connectionDB.query = connectionDB.connection.prepareStatement("SELECT name FROM category WHERE name = ?");
+                connectionDB.query.setString(1, name);
+                connectionDB.result = connectionDB.query.executeQuery();
+                if (connectionDB.result.next()) {
+                    return true;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectionDB.closeConnection();
+            }
+            return false;
         }
 
+        @Nullable
+        @Contract(pure = true)
+        public static List<CCategory> search(String values) {
+            return null;
+        }
     }
 }
 

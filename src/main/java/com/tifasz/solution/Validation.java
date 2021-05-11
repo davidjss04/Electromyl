@@ -62,12 +62,15 @@ public class Validation {
         return false;
     }
 
+    public static boolean documentExist(String document){
+        if(People.Query.documentExist(document)){
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isValidDocument(String documentType, String document) {
         if (isEmpty(document)) {
-            return false;
-        }
-
-        if(!People.Query.documentExist(document)){
             return false;
         }
 

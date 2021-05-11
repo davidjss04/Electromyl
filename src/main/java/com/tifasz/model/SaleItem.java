@@ -28,7 +28,7 @@ public class SaleItem extends Item implements IModel {
         this.idSale = idSale;
     }
 
-    public static SaleItem newItem(Product product,String unit, double productPrice, double productQuality){
+    public static SaleItem newItem(Product product, String unit, double productPrice, double productQuality) {
         SaleItem saleItem = new SaleItem();
         saleItem.setUnit(unit);
         saleItem.setProduct(product);
@@ -47,14 +47,14 @@ public class SaleItem extends Item implements IModel {
 
     @Override
     public boolean save() {
-    
+
         try {
-            if(connectionDB.openConnection()){
+            if (connectionDB.openConnection()) {
                 return false;
             }
             connectionDB.query = connectionDB.connection.prepareCall("CALL spCUSaleDetail(?,?,?,?,?,?)");
             extracted(connectionDB);
-            connectionDB.query.setInt(2,getIdSale());
+            connectionDB.query.setInt(2, getIdSale());
             connectionDB.result = connectionDB.query.executeQuery();
 
             if (!connectionDB.result.next()) {
@@ -69,11 +69,18 @@ public class SaleItem extends Item implements IModel {
         return false;
     }
 
-    public static class Query{
+    @Override
+    public String toString() {
+        return "SaleItem{" +
+                "idSale=" + idSale +
+                "} " + super.toString();
+    }
+
+    public static class Query {
         @NotNull
         @org.jetbrains.annotations.Contract
         private static SaleItem insertAttributes(@NotNull SaleItem saleItem) throws Exception {
-            Item.insertAttributes(saleItem,connectionDB);
+            Item.insertAttributes(saleItem, connectionDB);
             saleItem.setIdSale(connectionDB.result.getInt(1));
             return saleItem;
         }
@@ -151,12 +158,5 @@ public class SaleItem extends Item implements IModel {
             }
             return null;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "SaleItem{" +
-                "idSale=" + idSale +
-                "} " + super.toString();
     }
 }

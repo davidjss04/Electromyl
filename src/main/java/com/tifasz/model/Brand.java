@@ -1,8 +1,8 @@
 package com.tifasz.model;
 
 
+import com.tifasz.controller.CBrand;
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Brand implements IModel {
+public class Brand {
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idBrand;
@@ -43,7 +43,6 @@ public class Brand implements IModel {
         this.name = name;
     }
 
-    @Override
     public boolean save() {
         try {
             if (connectionDB.openConnection()) {
@@ -79,18 +78,18 @@ public class Brand implements IModel {
 
         @NotNull
         @org.jetbrains.annotations.Contract
-        private static Brand insertAttributes(@NotNull Brand brand) throws Exception {
+        private static CBrand insertAttributes(@NotNull CBrand brand) throws Exception {
             brand.setIdBrand(connectionDB.result.getInt(1));
             brand.setName(connectionDB.result.getString(2));
             return brand;
         }
 
         @NotNull
-        private static List<Brand> getBrands() throws Exception {
+        private static List<CBrand> getCBrands() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
-            List<Brand> brands = new ArrayList<>();
+            List<CBrand> brands = new ArrayList<>();
             while (connectionDB.result.next()) {
-                Brand brand = insertAttributes(new Brand());
+                CBrand brand = insertAttributes(new CBrand());
                 brands.add(brand);
             }
             return brands;
@@ -98,16 +97,16 @@ public class Brand implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static Brand get(int idBrand) {
+        public static CBrand get(int idCBrand) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
                 }
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_brand, name FROM brand WHERE id_brand = ?");
-                connectionDB.query.setInt(1, idBrand);
+                connectionDB.query.setInt(1, idCBrand);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new Brand());
+                    return insertAttributes(new CBrand());
                 }
 
             } catch (Exception e) {
@@ -120,7 +119,7 @@ public class Brand implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Brand> getList() {
+        public static List<CBrand> getList() {
 
             try {
                 if (connectionDB.openConnection()) {
@@ -128,7 +127,7 @@ public class Brand implements IModel {
                 }
 
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_brand, name FROM brand");
-                return getBrands();
+                return getCBrands();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -140,7 +139,7 @@ public class Brand implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Brand> search(String values) {
+        public static List<CBrand> search(String values) {
             //Analyzing the importance in this class
             return null;
         }

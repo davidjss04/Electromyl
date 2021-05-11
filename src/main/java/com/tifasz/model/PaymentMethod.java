@@ -46,21 +46,29 @@ public class PaymentMethod implements IModel {
         return false;
     }
 
-    public static class Query{
+    @Override
+    public String toString() {
+        return "PaymentMethod{" +
+                "idPaymentMethod=" + idPaymentMethod +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    public static class Query {
 
         @NotNull
-        private static List<PaymentMethod> getPaymentMethods(){
+        private static List<PaymentMethod> getPaymentMethods() {
             List<PaymentMethod> paymentMethods = new ArrayList<>();
-            paymentMethods.add(new PaymentMethod(1,"EFECTIVO"));
-            paymentMethods.add(new PaymentMethod(2,"CREDITO"));
+            paymentMethods.add(new PaymentMethod(1, "EFECTIVO"));
+            paymentMethods.add(new PaymentMethod(2, "CREDITO"));
             return paymentMethods;
         }
 
         @Nullable
         @Contract(pure = true)
         public static PaymentMethod get(int idPaymentMethod) {
-            for (PaymentMethod paymentMethod: getPaymentMethods()) {
-                if(paymentMethod.getIdPaymentMethod() == idPaymentMethod){
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod.getIdPaymentMethod() == idPaymentMethod) {
                     return paymentMethod;
                 }
             }
@@ -73,13 +81,5 @@ public class PaymentMethod implements IModel {
             return getPaymentMethods();
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return "PaymentMethod{" +
-                "idPaymentMethod=" + idPaymentMethod +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

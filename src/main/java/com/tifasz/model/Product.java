@@ -1,5 +1,6 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CCategory;
 import com.tifasz.solution.ConnectionDB;
 import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
@@ -16,7 +17,7 @@ public class Product implements IModel {
     private String productCode;
     private String description;
     private double stock;
-    private Category category;
+    private CCategory category;
     private Brand brand;
     private boolean isDelete;
     private List<Price> prices;
@@ -25,13 +26,13 @@ public class Product implements IModel {
         this.idProduct = 0;
         this.productCode = "";
         this.stock = 0D;
-        this.category = new Category();
+        this.category = new CCategory();
         this.brand = new Brand();
         this.isDelete = false;
         this.prices = new ArrayList<>();
     }
 
-    public Product(int idProduct, String productCode, String description, double stock, Category category, Brand brand, List<Price> prices, boolean idDelete) {
+    public Product(int idProduct, String productCode, String description, double stock, CCategory category, Brand brand, List<Price> prices, boolean idDelete) {
         this.idProduct = idProduct;
         this.productCode = productCode;
         this.description = description;
@@ -78,7 +79,7 @@ public class Product implements IModel {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CCategory category) {
         this.category = category;
     }
 
@@ -128,7 +129,7 @@ public class Product implements IModel {
             connectionDB.result = connectionDB.query.executeQuery();
 
             if (connectionDB.result.next()) {
-                for (Price price:getPrices() ) {
+                for (Price price : getPrices()) {
                     price.setIdProduct(connectionDB.result.getInt(1));
                     price.save();
                 }
@@ -144,6 +145,20 @@ public class Product implements IModel {
         }
         return false;
 
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "idProduct=" + idProduct +
+                ", productCode='" + productCode + '\'' +
+                ", description='" + description + '\'' +
+                ", stock=" + stock +
+                ", category=" + category +
+                ", brand=" + brand +
+                ", prices=" + prices +
+                ", isDelete=" + isDelete +
+                '}' + '\n';
     }
 
     public static class Query {
@@ -236,19 +251,5 @@ public class Product implements IModel {
             return null;
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "idProduct=" + idProduct +
-                ", productCode='" + productCode + '\'' +
-                ", description='" + description + '\'' +
-                ", stock=" + stock +
-                ", category=" + category +
-                ", brand=" + brand +
-                ", prices=" + prices +
-                ", isDelete=" + isDelete +
-                '}'+'\n';
     }
 }

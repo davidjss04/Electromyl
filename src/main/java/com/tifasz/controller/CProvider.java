@@ -45,6 +45,28 @@ public class CProvider extends Provider {
         return provider;
     }
 
+    public static CProvider newProvider(String documentType, String documentNumber, String firstName, String lastName, String numberPhone, String email, byte sex,
+                                        Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String description) {
+
+        if (!isValidFirstName(firstName) && !isValidLastName(lastName)) {
+            return null;
+        }
+
+        CProvider provider = new CProvider();
+        provider.setDocumentType(documentType);
+        provider.setDocumentNumber(documentNumber);
+        provider.setFullName(String.format("%s, %s", filter(lastName),filter(firstName)));
+        provider.setNumberPhone(numberPhone);
+        provider.setEmail(email);
+        provider.setSex(sex);
+        provider.setBirthdate(birthdate);
+        provider.setAddress(address);
+        provider.setDistrict(district);
+        provider.setDateJoined(dateJoined);
+        provider.setDescription(description);
+        return provider;
+    }
+
     public boolean save(Provider Provider) {
 
         if (Provider != null) {

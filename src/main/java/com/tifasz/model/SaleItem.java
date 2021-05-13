@@ -1,7 +1,6 @@
 package com.tifasz.model;
 
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SaleItem extends Item implements IModel {
+public class SaleItem extends Item{
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idSale;
@@ -45,7 +44,6 @@ public class SaleItem extends Item implements IModel {
         this.idSale = idSale;
     }
 
-    @Override
     public boolean save() {
 
         try {

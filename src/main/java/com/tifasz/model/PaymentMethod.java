@@ -1,7 +1,7 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CPaymentMethod;
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentMethod implements IModel {
+public class PaymentMethod{
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idPaymentMethod;
@@ -41,8 +41,8 @@ public class PaymentMethod implements IModel {
         this.name = name;
     }
 
-    @Override
-    public boolean save() {
+
+    protected boolean save() {
         return false;
     }
 
@@ -57,18 +57,18 @@ public class PaymentMethod implements IModel {
     public static class Query {
 
         @NotNull
-        private static List<PaymentMethod> getPaymentMethods() {
-            List<PaymentMethod> paymentMethods = new ArrayList<>();
-            paymentMethods.add(new PaymentMethod(1, "EFECTIVO"));
-            paymentMethods.add(new PaymentMethod(2, "CREDITO"));
+        private static List<CPaymentMethod> getCPaymentMethods() {
+            List<CPaymentMethod> paymentMethods = new ArrayList<>();
+            paymentMethods.add(new CPaymentMethod(1, "EFECTIVO"));
+            paymentMethods.add(new CPaymentMethod(2, "CREDITO"));
             return paymentMethods;
         }
 
         @Nullable
         @Contract(pure = true)
-        public static PaymentMethod get(int idPaymentMethod) {
-            for (PaymentMethod paymentMethod : getPaymentMethods()) {
-                if (paymentMethod.getIdPaymentMethod() == idPaymentMethod) {
+        public static CPaymentMethod get(int idCPaymentMethod) {
+            for (CPaymentMethod paymentMethod : getCPaymentMethods()) {
+                if (paymentMethod.getIdPaymentMethod() == idCPaymentMethod) {
                     return paymentMethod;
                 }
             }
@@ -77,8 +77,8 @@ public class PaymentMethod implements IModel {
         }
 
         @Contract(pure = true)
-        public static List<PaymentMethod> getList(boolean isDelete) {
-            return getPaymentMethods();
+        public static List<CPaymentMethod> getList() {
+            return getCPaymentMethods();
         }
 
     }

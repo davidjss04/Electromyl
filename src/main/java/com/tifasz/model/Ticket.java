@@ -1,7 +1,7 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CTicket;
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ticket implements IModel {
+public class Ticket{
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idTicket;
@@ -41,8 +41,7 @@ public class Ticket implements IModel {
         this.name = name;
     }
 
-    @Override
-    public boolean save() {
+    protected boolean save() {
         return false;
     }
 
@@ -57,20 +56,20 @@ public class Ticket implements IModel {
     public static class Query {
 
         @NotNull
-        private static List<Ticket> getTickets() {
-            List<Ticket> tickets = new ArrayList<>();
-            tickets.add(new Ticket(1, "FACTURA"));
-            tickets.add(new Ticket(2, "BOLETA"));
-            tickets.add(new Ticket(3, "COTIZACIÓN"));
-            tickets.add(new Ticket(4, "NOTA DE VENTA"));
+        private static List<CTicket> getCTickets() {
+            List<CTicket> tickets = new ArrayList<>();
+            tickets.add(new CTicket(1, "FACTURA"));
+            tickets.add(new CTicket(2, "BOLETA"));
+            tickets.add(new CTicket(3, "COTIZACIÓN"));
+            tickets.add(new CTicket(4, "NOTA DE VENTA"));
             return tickets;
         }
 
         @Nullable
         @Contract(pure = true)
-        public static Ticket get(int idTicket) {
-            for (Ticket ticket : getTickets()) {
-                if (ticket.getIdTicket() == idTicket) {
+        public static CTicket get(int idCTicket) {
+            for (CTicket ticket : getCTickets()) {
+                if (ticket.getIdTicket() == idCTicket) {
                     return ticket;
                 }
             }
@@ -78,8 +77,8 @@ public class Ticket implements IModel {
         }
 
         @Contract(pure = true)
-        public static List<Ticket> getList() {
-            return getTickets();
+        public static List<CTicket> getList() {
+            return getCTickets();
         }
 
     }

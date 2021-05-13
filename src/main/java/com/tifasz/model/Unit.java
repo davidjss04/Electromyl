@@ -1,7 +1,7 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CUnit;
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Unit implements IModel {
+public class Unit{
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idUnit;
@@ -74,8 +74,7 @@ public class Unit implements IModel {
         isDelete = delete;
     }
 
-    @Override
-    public boolean save() {
+    protected boolean save() {
         try {
             if (connectionDB.openConnection()) {
                 return false;
@@ -115,7 +114,7 @@ public class Unit implements IModel {
     public static class Query {
         @NotNull
         @org.jetbrains.annotations.Contract
-        private static Unit insertAttributes(@NotNull Unit unit) throws Exception {
+        private static CUnit insertAttributes(@NotNull CUnit unit) throws Exception {
             unit.setIdUnit(connectionDB.result.getInt(1));
             unit.setName(connectionDB.result.getString(2));
             unit.setAbbreviation(connectionDB.result.getString(3));
@@ -125,11 +124,11 @@ public class Unit implements IModel {
         }
 
         @NotNull
-        private static List<Unit> getUnits() throws Exception {
+        private static List<CUnit> getCUnits() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
-            List<Unit> units = new ArrayList<>();
+            List<CUnit> units = new ArrayList<>();
             while (connectionDB.result.next()) {
-                Unit unit = insertAttributes(new Unit());
+                CUnit unit = insertAttributes(new CUnit());
                 units.add(unit);
             }
             return units;
@@ -137,17 +136,17 @@ public class Unit implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static Unit get(int idUnit) {
+        public static CUnit get(int idCUnit) {
 
             try {
                 if (connectionDB.openConnection()) {
                     return null;
                 }
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_unit, name, abbreviation, quantity, is_delete FROM  unit WHERE id_unit = ?");
-                connectionDB.query.setInt(1, idUnit);
+                connectionDB.query.setInt(1, idCUnit);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new Unit());
+                    return insertAttributes(new CUnit());
                 }
 
             } catch (Exception e) {
@@ -160,7 +159,7 @@ public class Unit implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Unit> getList(boolean isDelete) {
+        public static List<CUnit> getList(boolean isDelete) {
 
             try {
                 if (connectionDB.openConnection()) {
@@ -169,7 +168,7 @@ public class Unit implements IModel {
 
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_unit, name, abbreviation, quantity, is_delete FROM  unit WHERE is_delete = ?");
                 connectionDB.query.setBoolean(1, isDelete);
-                return getUnits();
+                return getCUnits();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -181,7 +180,7 @@ public class Unit implements IModel {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Unit> search(String values) {
+        public static List<CUnit> search(String values) {
             //Analyzing the importance in this class
             return null;
         }

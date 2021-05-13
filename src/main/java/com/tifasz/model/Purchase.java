@@ -1,7 +1,6 @@
 package com.tifasz.model;
 
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +9,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Purchase implements IModel {
+public class Purchase{
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idPurchase;
@@ -74,7 +73,6 @@ public class Purchase implements IModel {
         this.detail = detail;
     }
 
-    @Override
     public boolean save() {
 
         try {

@@ -2,7 +2,6 @@ package com.tifasz.model;
 
 import com.tifasz.controller.CCategory;
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Product implements IModel {
+public class Product {
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idProduct;
@@ -111,7 +110,6 @@ public class Product implements IModel {
         this.isDelete = delete;
     }
 
-    @Override
     public boolean save() {
         try {
             if (connectionDB.openConnection()) {

@@ -1,7 +1,6 @@
 package com.tifasz.model;
 
 import com.tifasz.solution.ConnectionDB;
-import com.tifasz.solution.IModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Price implements IModel {
+public class Price {
     static ConnectionDB connectionDB = new ConnectionDB();
 
     private int idPrice;
@@ -22,7 +21,6 @@ public class Price implements IModel {
         this.value = 0d;
         this.idProduct = 0;
         this.unit = new Unit();
-
     }
 
     public Price(int idPrice, double value, int idProduct, Unit unit) {
@@ -71,7 +69,6 @@ public class Price implements IModel {
         this.unit = unit;
     }
 
-    @Override
     public boolean save() {
         try {
             if (connectionDB.openConnection()) {

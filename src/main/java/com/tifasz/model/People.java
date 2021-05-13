@@ -79,7 +79,7 @@ public abstract class People {
         people.setSex(connectionDB.result.getByte(7));
         people.setBirthdate(connectionDB.result.getDate(8));
         people.setAddress(connectionDB.result.getString(9));
-        people.setDistrict(UbiGeoDistrict.get(connectionDB.result.getString(10)));
+        people.setDistrict(UbiGeoDistrict.Query.get(connectionDB.result.getString(10)));
         people.setDelete(connectionDB.result.getBoolean(11));
         people.setDateJoined(connectionDB.result.getDate(12));
     }

@@ -23,11 +23,20 @@ public class CUser extends User {
     }
 
     public static CUser newUser(String documentType, String documentNumber, String fullName, String numberPhone, String email,
-                                byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String userCode,
+                                byte sex, Date birthdate, String address, CUbiGeoDistrict district, Date dateJoined, String userCode,
                                 String password, Time entryTime, Time exitTime) {
 
         CUser user = new CUser();
-        user.setPeopleAttributes(documentType, documentNumber, fullName, numberPhone, email, sex, birthdate, address, district, dateJoined);
+        user.setDocumentType(documentType);
+        user.setDocumentNumber(documentNumber);
+        user.setFullName(fullName);
+        user.setNumberPhone(numberPhone);
+        user.setEmail(email);
+        user.setSex(sex);
+        user.setBirthdate(birthdate);
+        user.setAddress(address);
+        user.setDistrict(district);
+        user.setDateJoined(dateJoined);
         user.setUserCode(userCode);
         user.setPassword(password);
         user.setEntryTime(entryTime);
@@ -36,7 +45,7 @@ public class CUser extends User {
     }
 
     public static CUser newUser(String documentType, String documentNumber, String firstName, String lastName, String numberPhone, String email,
-                                byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, String userCode,
+                                byte sex, Date birthdate, String address, CUbiGeoDistrict district, Date dateJoined, String userCode,
                                 String password, Time entryTime, Time exitTime) {
 
         if (!isValidFirstName(firstName) && !isValidLastName(lastName)) {
@@ -44,7 +53,16 @@ public class CUser extends User {
         }
 
         CUser user = new CUser();
-        user.setPeopleAttributes(documentType, documentNumber, String.format("%s, %s", filter(lastName), filter(firstName)), numberPhone, email, sex, birthdate, address, district, dateJoined);
+        user.setDocumentType(documentType);
+        user.setDocumentNumber(documentNumber);
+        user.setFullName(String.format("%s, %s", filter(lastName), filter(firstName)));
+        user.setNumberPhone(numberPhone);
+        user.setEmail(email);
+        user.setSex(sex);
+        user.setBirthdate(birthdate);
+        user.setAddress(address);
+        user.setDistrict(district);
+        user.setDateJoined(dateJoined);
         user.setUserCode(userCode);
         user.setPassword(password);
         user.setEntryTime(entryTime);
@@ -67,8 +85,8 @@ public class CUser extends User {
         return null;
     }
 
-    public static User get(int idUser) {
-        return User.Query.get(idUser);
+    public static CUser get(int idUser) {
+        return Query.get(idUser);
     }
 
     public static List<CUser> getList(boolean isDelete) {
@@ -80,38 +98,69 @@ public class CUser extends User {
     }
 
     @Override
-    protected boolean save() {
-        if (getClass() != null) {
-            if (isValidUser()) {
-                return super.save();
-            }
-            return false;
+    public boolean save() {
+        if (isValidUser()) {
+            filterUser();
+            return super.save();
         }
+        return false;
+    }
+
+    private void filterUser() {
+        this.setFullName(filter(getFullName()));
+        this.setNumberPhone(filter(getNumberPhone()));
+        this.setEmail(filter(getEmail()));
+        this.setSex(getSex());
+        this.setBirthdate(getBirthdate());
+        this.setAddress(filter(getAddress()));
+        this.setDistrict(getDistrict());
+        this.setDateJoined(getDateJoined());
+        this.setUserCode(getUserCode());
+        this.setPassword(getPassword());
+        this.setEntryTime(getEntryTime());
+        this.setExitTime(getExitTime());
+    }
+
+    private boolean isRepeatUser(){
         return false;
     }
 
     private boolean isValidUser() {
 
-        if (documentExist(getDocumentNumber()))
+        if (documentExist(getDocumentNumber())){
+            System.out.println("1");
             return false;
+        }
 
-        if (!isValidDocument(getDocumentType(), getDocumentNumber()))
+        if (!isValidDocument(getDocumentType(), getDocumentNumber())){
+            System.out.println("2");
             return false;
+        }
 
-        if (!isValidFullName(getFullName()))
+        if (!isValidFullName(getFullName())){
+            System.out.println("3");
             return false;
+        }
 
-        if (!isValidPhoneNumber(getNumberPhone()))
+        if (!isValidPhoneNumber(getNumberPhone())){
+            System.out.println("4");
             return false;
+        }
 
-        if (!isValidEmail(getEmail()))
+        if (!isValidEmail(getEmail())){
+            System.out.println("5");
             return false;
+        }
 
-        if (!isValidAddress(getAddress()))
+        if (!isValidAddress(getAddress())){
+            System.out.println("6");
             return false;
+        }
 
-        if(!isValidPassword(getPassword()))
+        if(!isValidPassword(getPassword())){
+            System.out.println("7");
             return false;
+        }
 
         return true;
     }

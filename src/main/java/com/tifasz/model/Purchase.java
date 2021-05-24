@@ -1,5 +1,6 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CPurchase;
 import com.tifasz.solution.ConnectionDB;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -26,11 +27,12 @@ public class Purchase{
         this.isDelete = false;
     }
 
-    public Purchase(int idPurchase, Provider provider, Date date, boolean isDelete) {
+    public Purchase(int idPurchase, Provider provider, Date date, boolean isDelete, List<PurchaseItem> detail) {
         this.idPurchase = idPurchase;
         this.provider = provider;
         this.date = date;
         this.isDelete = isDelete;
+        this.detail = detail;
     }
 
     public int getIdPurchase() {
@@ -102,7 +104,7 @@ public class Purchase{
         return false;
     }
 
-    @Override
+/*    @Override
     public String toString() {
         return "Purchase{" +
                 "idPurchase=" + idPurchase +
@@ -110,13 +112,24 @@ public class Purchase{
                 ", date=" + date +
                 ", isDelete=" + isDelete +
                 '}';
+    }*/
+
+    @Override
+    public String toString() {
+        return "Purchase{" +
+                "idPurchase=" + idPurchase +
+                ", provider=" + provider +
+                ", date=" + date +
+                ", isDelete=" + isDelete +
+                ", detail=" + detail +
+                '}';
     }
 
     public static class Query {
 
         @NotNull
         @org.jetbrains.annotations.Contract
-        private static Purchase insertAttributes(@NotNull Purchase purchase) throws Exception {
+        private static CPurchase insertAttributes(@NotNull CPurchase purchase) throws Exception {
             purchase.setIdPurchase(connectionDB.result.getInt(1));
             purchase.setProvider(Provider.Query.get(2));
             purchase.setDate(connectionDB.result.getDate(3));
@@ -125,11 +138,11 @@ public class Purchase{
         }
 
         @NotNull
-        private static List<Purchase> getPurchases() throws Exception {
+        private static List<CPurchase> getCPurchases() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
-            List<Purchase> purchases = new ArrayList<>();
+            List<CPurchase> purchases = new ArrayList<>();
             while (connectionDB.result.next()) {
-                Purchase purchase = insertAttributes(new Purchase());
+                CPurchase purchase = insertAttributes(new CPurchase());
                 purchases.add(purchase);
             }
             return purchases;
@@ -137,17 +150,17 @@ public class Purchase{
 
         @Nullable
         @Contract(pure = true)
-        public static Purchase get(int idPurchase) {
+        public static CPurchase get(int idCPurchase) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
                 }
 
                 connectionDB.query = connectionDB.connection.prepareStatement("");
-                connectionDB.query.setInt(1, idPurchase);
+                connectionDB.query.setInt(1, idCPurchase);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new Purchase());
+                    return insertAttributes(new CPurchase());
                 }
 
             } catch (Exception e) {
@@ -161,7 +174,7 @@ public class Purchase{
 
         @Nullable
         @Contract(pure = true)
-        public static List<Purchase> getList(boolean isDelete) {
+        public static List<CPurchase> getList(boolean isDelete) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -169,7 +182,7 @@ public class Purchase{
 
                 connectionDB.query = connectionDB.connection.prepareStatement("");
                 connectionDB.query.setBoolean(1, isDelete);
-                return getPurchases();
+                return getCPurchases();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -181,14 +194,14 @@ public class Purchase{
 
         @Nullable
         @Contract(pure = true)
-        public static List<Purchase> search(String values) {
+        public static List<CPurchase> search(String values) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
                 }
 
                 connectionDB.query = connectionDB.connection.prepareStatement("");
-                return getPurchases();
+                return getCPurchases();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -197,5 +210,6 @@ public class Purchase{
             }
             return null;
         }
+
     }
 }

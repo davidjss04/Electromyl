@@ -1,6 +1,8 @@
 package com.tifasz.model;
 
 import com.tifasz.controller.CCategory;
+import com.tifasz.controller.CPrice;
+import com.tifasz.controller.CProduct;
 import com.tifasz.solution.ConnectionDB;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +18,7 @@ public class Product {
     private String productCode;
     private String description;
     private double stock;
-    private CCategory category;
+    private Category category;
     private Brand brand;
     private boolean isDelete;
     private List<Price> prices;
@@ -25,7 +27,7 @@ public class Product {
         this.idProduct = 0;
         this.productCode = "";
         this.stock = 0D;
-        this.category = new CCategory();
+        this.category = new Category();
         this.brand = new Brand();
         this.isDelete = false;
         this.prices = new ArrayList<>();
@@ -74,11 +76,12 @@ public class Product {
         this.stock = stock;
     }
 
+
     public Category getCategory() {
         return category;
     }
 
-    public void setCategory(CCategory category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
@@ -110,7 +113,7 @@ public class Product {
         this.isDelete = delete;
     }
 
-    public boolean save() {
+    protected boolean save() {
         try {
             if (connectionDB.openConnection()) {
                 return false;
@@ -163,7 +166,7 @@ public class Product {
 
         @NotNull
         @org.jetbrains.annotations.Contract
-        private static Product insertAttributes(@NotNull Product product) throws Exception {
+        private static CProduct insertAttributes(@NotNull CProduct product) throws Exception {
             product.setIdProduct(connectionDB.result.getInt(1));
             product.setProductCode(connectionDB.result.getString(2));
             product.setDescription(connectionDB.result.getString(3));
@@ -171,16 +174,16 @@ public class Product {
             product.setCategory(Category.Query.get(connectionDB.result.getInt(5)));
             product.setBrand(Brand.Query.get(connectionDB.result.getInt(6)));
             product.setDelete(connectionDB.result.getBoolean(7));
-            product.setPrices(Price.Query.getList(product.getIdProduct()));
+            product.setPrices(CProduct.getPrices(CPrice.getList(product.getIdProduct())));
             return product;
         }
 
         @NotNull
-        private static List<Product> getProducts() throws Exception {
+        private static List<CProduct> getCProducts() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
-            List<Product> products = new ArrayList<>();
+            List<CProduct> products = new ArrayList<>();
             while (connectionDB.result.next()) {
-                Product product = insertAttributes(new Product());
+                CProduct product = insertAttributes(new CProduct());
                 products.add(product);
             }
             return products;
@@ -188,7 +191,7 @@ public class Product {
 
         @Nullable
         @Contract(pure = true)
-        public static Product get(int idProduct) {
+        public static CProduct get(int idProduct) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -198,7 +201,7 @@ public class Product {
                 connectionDB.query.setInt(1, idProduct);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new Product());
+                    return insertAttributes(new CProduct());
                 }
 
             } catch (Exception e) {
@@ -212,7 +215,7 @@ public class Product {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Product> getList(boolean isDelete) {
+        public static List<CProduct> getList(boolean isDelete) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
@@ -220,7 +223,7 @@ public class Product {
 
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_product, product_code, description, stock, id_category, id_brand, is_delete FROM  product WHERE is_delete = ?");
                 connectionDB.query.setBoolean(1, isDelete);
-                return getProducts();
+                return getCProducts();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -232,14 +235,14 @@ public class Product {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Product> search(String values) {
+        public static List<CProduct> search(String values) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
                 }
 
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_product, product_code, description, stock, id_category, id_brand, is_delete FROM  product WHERE MATCH (product_code, description) AGAINST ('" + values + "*' IN BOOLEAN MODE)");
-                return getProducts();
+                return getCProducts();
 
             } catch (Exception e) {
                 e.printStackTrace();

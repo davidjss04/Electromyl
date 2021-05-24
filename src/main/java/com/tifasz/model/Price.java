@@ -1,5 +1,6 @@
 package com.tifasz.model;
 
+import com.tifasz.controller.CPrice;
 import com.tifasz.solution.ConnectionDB;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -28,13 +29,6 @@ public class Price {
         this.value = value;
         this.idProduct = idProduct;
         this.unit = unit;
-    }
-
-    public static Price newPrice(double value, Unit unit) {
-        Price price = new Price();
-        price.setValue(value);
-        price.setUnit(unit);
-        return price;
     }
 
     public int getIdPrice() {
@@ -69,7 +63,7 @@ public class Price {
         this.unit = unit;
     }
 
-    public boolean save() {
+    protected boolean save() {
         try {
             if (connectionDB.openConnection()) {
                 return false;
@@ -108,7 +102,7 @@ public class Price {
 
         @NotNull
         @org.jetbrains.annotations.Contract
-        private static Price insertAttributes(@NotNull Price price) throws Exception {
+        private static CPrice insertAttributes(@NotNull CPrice price) throws Exception {
             price.setIdPrice(connectionDB.result.getInt(1));
             price.setValue(connectionDB.result.getDouble(2));
             price.setIdProduct(connectionDB.result.getInt(3));
@@ -117,11 +111,11 @@ public class Price {
         }
 
         @NotNull
-        private static List<Price> getPrices() throws Exception {
+        private static List<CPrice> getCPrices() throws Exception {
             connectionDB.result = connectionDB.query.executeQuery();
-            List<Price> prices = new ArrayList<>();
+            List<CPrice> prices = new ArrayList<>();
             while (connectionDB.result.next()) {
-                Price price = insertAttributes(new Price());
+                CPrice price = insertAttributes(new CPrice());
                 prices.add(price);
             }
             return prices;
@@ -129,16 +123,16 @@ public class Price {
 
         @Nullable
         @Contract(pure = true)
-        public static Price get(int idPrice) {
+        public static CPrice get(int idCPrice) {
             try {
                 if (connectionDB.openConnection()) {
                     return null;
                 }
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_price, value, id_product, id_unit FROM price WHERE id_price = ?");
-                connectionDB.query.setInt(1, idPrice);
+                connectionDB.query.setInt(1, idCPrice);
                 connectionDB.result = connectionDB.query.executeQuery();
                 if (connectionDB.result.next()) {
-                    return insertAttributes(new Price());
+                    return insertAttributes(new CPrice());
                 }
 
             } catch (Exception e) {
@@ -151,7 +145,7 @@ public class Price {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Price> getList(int idProduct) {
+        public static List<CPrice> getList(int idProduct) {
 
             try {
                 if (connectionDB.openConnection()) {
@@ -161,7 +155,7 @@ public class Price {
                 connectionDB.query = connectionDB.connection.prepareStatement("SELECT id_price, value, id_product, id_unit FROM price WHERE id_product = ?");
                 connectionDB.query.setInt(1, idProduct);
 
-                return getPrices();
+                return getCPrices();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -174,7 +168,7 @@ public class Price {
 
         @Nullable
         @Contract(pure = true)
-        public static List<Price> search(String values) {
+        public static List<CPrice> search(String values) {
             //Analyzing the importance in this class
             return null;
         }

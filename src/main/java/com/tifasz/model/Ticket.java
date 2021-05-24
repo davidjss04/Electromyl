@@ -50,7 +50,7 @@ public class Ticket{
         return "Ticket{" +
                 "idTicket=" + idTicket +
                 ", name='" + name + '\'' +
-                '}';
+                '}'+'\n';
     }
 
     public static class Query {

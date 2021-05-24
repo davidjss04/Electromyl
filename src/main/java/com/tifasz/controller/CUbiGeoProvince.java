@@ -1,13 +1,12 @@
 package com.tifasz.controller;
 
-import com.tifasz.model.UbiGeoDepartment;
 import com.tifasz.model.UbiGeoProvince;
 
 import java.util.List;
 
 public class CUbiGeoProvince extends UbiGeoProvince {
 
-    public CUbiGeoProvince(String idProvince, String nameProvince, UbiGeoDepartment department) {
+    public CUbiGeoProvince(String idProvince, String nameProvince, CUbiGeoDepartment department) {
         super(idProvince, nameProvince, department);
     }
 

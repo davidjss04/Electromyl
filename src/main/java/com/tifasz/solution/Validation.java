@@ -176,6 +176,11 @@ public class Validation {
         return matcher.matches();
     }
 
+
+    public static boolean isValidValuesPrice(double values){
+        return true;
+    }
+
     public static boolean isEmpty(String value){
         if (value.equals(null) || value.equals("")) {
             return true;

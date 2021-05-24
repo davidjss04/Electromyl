@@ -26,6 +26,10 @@ public class CUser extends User {
                                 byte sex, Date birthdate, String address, CUbiGeoDistrict district, Date dateJoined, String userCode,
                                 String password, Time entryTime, Time exitTime) {
 
+        if(isRepeatUser(documentNumber)){
+            return null;
+        }
+
         CUser user = new CUser();
         user.setDocumentType(documentType);
         user.setDocumentNumber(documentNumber);
@@ -47,6 +51,10 @@ public class CUser extends User {
     public static CUser newUser(String documentType, String documentNumber, String firstName, String lastName, String numberPhone, String email,
                                 byte sex, Date birthdate, String address, CUbiGeoDistrict district, Date dateJoined, String userCode,
                                 String password, Time entryTime, Time exitTime) {
+
+        if(isRepeatUser(documentNumber)){
+           return null;
+        }
 
         if (!isValidFirstName(firstName) && !isValidLastName(lastName)) {
             return null;
@@ -121,20 +129,20 @@ public class CUser extends User {
         this.setExitTime(getExitTime());
     }
 
-    private boolean isRepeatUser(){
+    private static boolean isRepeatUser(String documentNumber){
+        if (documentExist(documentNumber)){
+            System.out.println("1");
+            return true;
+        }
+
         return false;
     }
 
     private boolean isValidUser() {
 
-        if (documentExist(getDocumentNumber())){
-            System.out.println("1");
-            return false;
-        }
-
         if (!isValidDocument(getDocumentType(), getDocumentNumber())){
             System.out.println("2");
-            return false;
+            return true;
         }
 
         if (!isValidFullName(getFullName())){

@@ -23,13 +23,16 @@ public class CBrand extends Brand {
 
     @Override
     public boolean save() {
-        if(getClass() != null){
-            if(isValidBrand()){
-                return super.save();
-            }
-            return false;
+        if(isValidBrand()){
+            filterBrand();
+            return super.save();
         }
         return false;
+    }
+
+    private void filterBrand() {
+        this.setName(filter(getName()));
+        this.setIdBrand(getIdBrand());
     }
 
     private boolean isValidBrand() {

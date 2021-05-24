@@ -87,7 +87,7 @@ public class UbiGeoDistrict {
                     CUbiGeoDistrict ubiGeoDistrict = new CUbiGeoDistrict(
                             connectionDB.result.getString(1),
                             connectionDB.result.getString(2),
-                            province
+                            (CUbiGeoProvince) province
                     );
                     return ubiGeoDistrict;
                 }
@@ -115,7 +115,7 @@ public class UbiGeoDistrict {
                     CUbiGeoDistrict ubiGeoDistrict = new CUbiGeoDistrict(
                             connectionDB.result.getString(1),
                             connectionDB.result.getString(2),
-                            province
+                            (CUbiGeoProvince) province
                     );
                     ubiGeoDistrictList.add(ubiGeoDistrict);
                 }

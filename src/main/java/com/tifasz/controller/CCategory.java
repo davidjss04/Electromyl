@@ -4,10 +4,12 @@ import com.tifasz.model.Category;
 
 import java.util.List;
 
+import static com.tifasz.solution.Validation.filter;
 import static com.tifasz.solution.Validation.isValidTitle;
 
 public class CCategory extends Category {
 
+    //Agregar la propiedad de borrar o cambiar de modalidad a elimanado...
     public CCategory() {
     }
 
@@ -35,13 +37,15 @@ public class CCategory extends Category {
 
     @Override
     public boolean save() {
-        if (this.getClass() != null) {
-            if (isValidCategory()) {
-                return super.save();
-            }
-            return false;
+        if (isValidCategory()) {
+            filterCategory();
+            return super.save();
         }
         return false;
+    }
+
+    private void filterCategory() {
+        this.setName(filter(getName()));
     }
 
     private boolean isValidCategory() {

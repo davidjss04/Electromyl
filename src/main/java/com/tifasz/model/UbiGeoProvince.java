@@ -84,7 +84,7 @@ public class UbiGeoProvince {
                     CUbiGeoProvince ubiGeoProvince = new CUbiGeoProvince(
                             connectionDB.result.getString(1),
                             connectionDB.result.getString(2),
-                            department
+                            (CUbiGeoDepartment) department
                     );
                     return ubiGeoProvince;
                 }
@@ -112,7 +112,7 @@ public class UbiGeoProvince {
                     CUbiGeoProvince ubiGeoProvince = new CUbiGeoProvince(
                             connectionDB.result.getString(1),
                             connectionDB.result.getString(2),
-                            department
+                            (CUbiGeoDepartment) department
                     );
                     ubiGeoProvinceList.add(ubiGeoProvince);
                 }

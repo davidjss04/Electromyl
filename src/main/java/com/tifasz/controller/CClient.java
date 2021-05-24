@@ -1,7 +1,6 @@
 package com.tifasz.controller;
 
 import com.tifasz.model.Client;
-import com.tifasz.model.UbiGeoDistrict;
 
 import java.sql.Date;
 import java.util.List;
@@ -9,11 +8,16 @@ import java.util.List;
 import static com.tifasz.solution.Validation.*;
 
 public class CClient extends Client {
-    public static Client newClient(String documentType, String documentNumber, String fullName, String numberPhone, String email, byte sex,
-                                   Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, byte origin,
+    public static CClient newClient(String documentType, String documentNumber, String fullName, String numberPhone, String email, byte sex,
+                                   Date birthdate, String address, CUbiGeoDistrict district, Date dateJoined, byte origin,
                                    byte status, byte condition) {
 
-        Client client = new Client();
+        if(isRepeatClient(documentNumber)){
+            //Se puede retornar un objeto con parametros vacios...
+            return null;
+        }
+
+        CClient client = new CClient();
         client.setDocumentType(documentType);
         client.setDocumentNumber(documentNumber);
         client.setFullName(fullName);
@@ -30,9 +34,14 @@ public class CClient extends Client {
         return client;
     }
 
+
     public static Client newClient(String documentType, String documentNumber, String firstName, String lastName, String numberPhone, String email,
-                                   byte sex, Date birthdate, String address, UbiGeoDistrict district, Date dateJoined, byte origin,
+                                   byte sex, Date birthdate, String address, CUbiGeoDistrict district, Date dateJoined, byte origin,
                                    byte status, byte condition) {
+
+        if(isRepeatClient(documentNumber)){
+            return null;
+        }
 
         if (!isValidFirstName(firstName) && !isValidLastName(lastName)) {
             return null;
@@ -56,14 +65,26 @@ public class CClient extends Client {
     }
 
 
-    public boolean save(CClient client) {
-        if (client != null) {
-            if(isValidClient()){
-                return client.save();
-            }
-            return false;
+    public boolean save() {
+        if(isValidClient()){
+            filterClient();
+            return super.save();
         }
         return false;
+    }
+
+    private void filterClient() {
+        this.setFullName(filter(getFullName()));
+        this.setNumberPhone(filter(getNumberPhone()));
+        this.setEmail(filter(getEmail()));
+        this.setSex(getSex());
+        this.setBirthdate(getBirthdate());
+        this.setAddress(filter(getAddress()));
+        this.setDistrict(getDistrict());
+        this.setDateJoined(getDateJoined());
+        this.setOrigin(getOrigin());
+        this.setStatus(getStatus());
+        this.setCondition(getCondition());
     }
 
     public static CClient get(int op, String documentNumber) {
@@ -90,50 +111,49 @@ public class CClient extends Client {
     }
 
     public static List<CClient> search(String values) {
+        if (isEmpty(values))
+            return null;
+
         return Query.search(values);
     }
 
-    private static boolean isValidCClient(String documentType, String documentNumber, String fullName, String numberPhone, String email, String address) {
-        if (documentExist(documentNumber))
-            return false;
+    private static boolean isRepeatClient(String documentNumber){
+        if (documentExist(documentNumber)){
+            System.out.println("1");
+            return true;
+        }
 
-        if (!isValidDocument(documentType, documentNumber))
-            return false;
-
-        if (!isValidFullName(fullName))
-            return false;
-
-        if (!isValidPhoneNumber(numberPhone))
-            return false;
-
-        if (!isValidEmail(email))
-            return false;
-
-        return isValidAddress(address);
-
+        return false;
     }
 
     private boolean isValidClient() {
-        if (documentExist(getDocumentNumber()))
-            return false;
 
-        if (!isValidDocument(getDocumentType(), getDocumentNumber()))
-            return false;
+        if (!isValidDocument(getDocumentType(), getDocumentNumber())){
+            System.out.println("2");
+            return true;
+        }
 
-        if (!isValidFullName(getFullName()))
+        if (!isValidFullName(getFullName())){
+            System.out.println("3");
             return false;
+        }
 
-        if (!isValidPhoneNumber(getNumberPhone()))
+        if (!isValidPhoneNumber(getNumberPhone())){
+            System.out.println("4");
             return false;
+        }
 
-        if (!isValidEmail(getEmail()))
+        if (!isValidEmail(getEmail())){
+            System.out.println("5");
             return false;
+        }
 
-        if (!isValidAddress(getAddress()))
+        if (!isValidAddress(getAddress())){
+            System.out.println("6");
             return false;
+        }
 
         return true;
-
     }
 
 
